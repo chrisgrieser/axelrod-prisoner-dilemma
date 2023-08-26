@@ -23,24 +23,40 @@ def colored_print(color: str, text: str) -> None:
     print(colors[color] + text + colors["reset"])
 
 
-def strategy_to_action(strategy: str) -> str:
-    """Given a strategy, return an action, either "cooperate" or "defect"."""
+def strategy_to_action(actor_self: str, strategy: str, previous_runs: list[dict[str, str]]) -> str:
+    """Given a strategy, return an action, either "cooperate" or "defect".
+
+    Available strategies are:
+        - always_cooperate
+        - always_defect
+        - random
+        - alternate: alternate between cooperation and defection
+        - revenge: if opponent defected last round, defect, otherwise cooperate
+    """
+    opponent = "actor2" if actor_self == "actor1" else "actor1"
+
     if strategy == "always_cooperate":
         return "cooperate"
     if strategy == "always_defect":
         return "defect"
     if strategy == "random":
         return random.choice(["cooperate", "defect"])
+    if strategy == "alternate":
+        return "cooperate" if previous_runs[-1][actor_self] == "defect" else "defect"
+    if strategy == "revenge":
+        last_opponent_action = previous_runs[-1][opponent]
+        return "defect" if last_opponent_action == "defect" else "cooperate"
     return ""
 
 
 def play_game(actor1_strategy: str, actor2_strategy: str, rounds: int) -> dict[str, int]:
     """Play prisoners' dilemma and return the accumulated outcome for all rounds."""
     outcome = {"actor1": 0, "actor2": 0}
+    previous_runs = []
 
     for _ in range(rounds):
-        actor1_action = strategy_to_action(actor1_strategy)
-        actor2_action = strategy_to_action(actor2_strategy)
+        actor1_action = strategy_to_action("actor1", actor1_strategy, previous_runs)
+        actor2_action = strategy_to_action("actor2", actor2_strategy, previous_runs)
         if actor1_action == "cooperate" and actor2_action == "cooperate":
             outcome["actor1"] += 1
             outcome["actor2"] += 1
@@ -53,6 +69,8 @@ def play_game(actor1_strategy: str, actor2_strategy: str, rounds: int) -> dict[s
         elif actor1_action == "defect" and actor2_action == "cooperate":
             outcome["actor1"] += 0
             outcome["actor2"] += 3
+        previous_runs.append({"actor1": actor1_action, "actor2": actor2_action})
+
     return outcome
 
 
