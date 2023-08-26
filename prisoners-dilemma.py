@@ -31,9 +31,9 @@ available_strats = ["always_cooperate", "always_defect", "random", "alternate", 
 
 
 def strategy_to_action(
-    actor_self: str,
+    actor_self_id: int,
     strategy: str,
-    previous_runs: list[dict[str, str]],
+    previous_runs: list[tuple[str, str]],
 ) -> str:
     """Given the actors idendity, their strategy, and the previous rounds.
 
@@ -48,7 +48,7 @@ def strategy_to_action(
         - alternate: alternate between cooperation and defection
         - tit-for-tat: begin with cooperation, and copy the opponent's last action
     """
-    opponent = "actor2" if actor_self == "actor1" else "actor1"
+    opponent_id = 1 if actor_self_id == 0 else 0
     is_first_run = len(previous_runs) == 0
     action = ""
 
@@ -62,41 +62,43 @@ def strategy_to_action(
         if is_first_run:
             action = "cooperate"
         else:
-            last_self_action = previous_runs[-1][actor_self]
+            last_self_action = previous_runs[-1][actor_self_id]
             action = "defect" if last_self_action == "cooperate" else "cooperate"
     elif strategy == "tit-for-tat":
         if is_first_run:
             action = "cooperate"
         else:
-            last_opponent_action = previous_runs[-1][opponent]
+            last_opponent_action = previous_runs[-1][opponent_id]
             action = last_opponent_action
 
     return action
 
 
-def play_game(actor1_strat: str, actor2_strat: str, rounds: int) -> dict[str, int]:
+def play_game(actor1_strat: str, actor2_strat: str, rounds: int) -> list[int]:
     """Play prisoners' dilemma and return the accumulated outcome for all rounds."""
-    outcome = {"actor1": 0, "actor2": 0}
+    years_in_prison = [-1, 0, 0]  # first value dummy for one-based indexing
     run_history = []  # keep track of previous rounds, i.e. a memory for the actors
 
     for _ in range(rounds):
-        actor1_action = strategy_to_action("actor1", actor1_strat, run_history)
-        actor2_action = strategy_to_action("actor2", actor2_strat, run_history)
+        actor1_action = strategy_to_action(1, actor1_strat, run_history)
+        actor2_action = strategy_to_action(2, actor2_strat, run_history)
+        # apply outcome rules for the prisoner's dilemma
+        # DOCS https://www.wikiwand.com/en/Prisoner's_dilemma#Strategy_for_the_prisoner's_dilemma
         if actor1_action == "cooperate" and actor2_action == "cooperate":
-            outcome["actor1"] += 1
-            outcome["actor2"] += 1
+            years_in_prison[1] += 1
+            years_in_prison[2] += 1
         elif actor1_action == "defect" and actor2_action == "defect":
-            outcome["actor1"] += 2
-            outcome["actor2"] += 2
+            years_in_prison[1] += 2
+            years_in_prison[2] += 2
         elif actor1_action == "cooperate" and actor2_action == "defect":
-            outcome["actor1"] += 3
-            outcome["actor2"] += 0
+            years_in_prison[1] += 3
+            years_in_prison[2] += 0
         elif actor1_action == "defect" and actor2_action == "cooperate":
-            outcome["actor1"] += 0
-            outcome["actor2"] += 3
-        run_history.append({"actor1": actor1_action, "actor2": actor2_action})
+            years_in_prison[1] += 0
+            years_in_prison[2] += 3
+        run_history.append((actor1_action, actor2_action))
 
-    return outcome
+    return years_in_prison
 
 
 def main() -> None:
@@ -125,7 +127,7 @@ def main() -> None:
         return
 
     # play the game
-    outcome = play_game(actor1_strat, actor2_strat, rounds)
+    outcome_years = play_game(actor1_strat, actor2_strat, rounds)
 
     # print the output to the terminal
     color_print("magenta", "Prisoners' Dilemma")
@@ -141,14 +143,14 @@ def main() -> None:
     print()
 
     color_print("blue", "Outcome:")
-    print(f"Actor 1: {outcome['actor1']} years")
-    print(f"Actor 2: {outcome['actor2']} years")
+    print(f"Actor 1: {outcome_years[1]} years")
+    print(f"Actor 2: {outcome_years[2]} years")
     print()
 
     color_print("blue", "Victory strategy:")
-    if outcome["actor1"] > outcome["actor2"]:
+    if outcome_years[1] > outcome_years[2]:
         victory_strat = actor1_strat
-    elif outcome["actor1"] < outcome["actor2"]:
+    elif outcome_years[1] < outcome_years[2]:
         victory_strat = actor2_strat
     else:
         victory_strat = "Tied"
