@@ -29,14 +29,12 @@ def color_print(color: str, text: str) -> None:
 
 
 def strategy_is_valid(strategy: str) -> bool:
-    """Validate a strategy."""
+    """Check whether the given strategy is available."""
     return strategy_to_action(0, strategy, []) != ""
 
 
 def strategy_to_action(
-    actor_self_id: int,
-    strategy: str,
-    previous_runs: list[tuple[str, str]],
+    actor_self_id: int, strategy: str, previous_runs: list[tuple[str, str]],
 ) -> str:
     """Given the actors idendity, their strategy, and the previous rounds.
 
@@ -113,10 +111,10 @@ def main() -> None:
     try:
         rounds = int(sys.argv[1])
         if rounds <= 0:
-            color_print("yellow", "Number of rounds must be a positive integer.")
+            color_print("yellow", "Number of rounds must be a positive number.")
             return
     except ValueError:
-        color_print("yellow", "Invalid number of rounds. Please provide a valid integer.")
+        color_print("yellow", "Number of rounds must be a number.")
         return
     strats_used = (sys.argv[2], sys.argv[3])
     if not strategy_is_valid(strats_used[0]) or not strategy_is_valid(strats_used[1]):
@@ -130,7 +128,7 @@ def main() -> None:
     color_print("magenta", "Prisoners' Dilemma")
     color_print("magenta", "────────────────────────")
 
-    color_print("blue", "Strategies used:")
+    color_print("blue", "Strategies:")
     print("Actor 1:", strats_used[0])
     print("Actor 2:", strats_used[1])
     print()
@@ -144,7 +142,7 @@ def main() -> None:
     print(f"Actor 2: {outcome_years[1]} years")
     print()
 
-    color_print("blue", "Victory strategy:")
+    color_print("blue", "Winner:")
     if outcome_years[0] > outcome_years[1]:
         victory_strat = strats_used[0]
     elif outcome_years[0] < outcome_years[1]:
