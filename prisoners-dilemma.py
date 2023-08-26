@@ -1,8 +1,7 @@
 """Simple simulation of the prisoner's dilemma experiment.
 
 Inspired by Axelrod's "Evolution of Cooperation" (1984).
-Prior software:
-    - https://github.com/Axelrod-Python/Axelrod
+Prior software: https://github.com/Axelrod-Python/Axelrod
 """
 
 from __future__ import annotations
@@ -46,8 +45,7 @@ def strategy_to_action(
         - always_defect
         - random
         - alternate: alternate between cooperation and defection
-        - tit-for-tat: begin with cooperation, if opponent defected last round,
-            defect, otherwise cooperate
+        - tit-for-tat: begin with cooperation, and copy the opponent's last action
     """
     opponent = "actor2" if actor_self == "actor1" else "actor1"
     is_first_run = len(previous_runs) == 0
@@ -106,12 +104,19 @@ def main() -> None:
     Usage: python3 prisoners-dilemma.py <rounds> <actor1_strategy> <actor2_strategy>
     """
     # read & validate input
-    parameters_needed = 2
+    parameters_needed = 3
     if len(sys.argv) < parameters_needed + 1:  # +1, as argv[0] is script name
         color_print("yellow", "Expected parameters: <rounds> <actor1_strategy> <actor2_strategy>")
         return
 
-    rounds = int(sys.argv[1])
+    try:
+        rounds = int(sys.argv[1])
+        if rounds <= 0:
+            color_print("yellow", "Number of rounds must be a positive integer.")
+            return
+    except ValueError:
+        color_print("yellow", "Invalid number of rounds. Please provide a valid integer.")
+        return
     actor1_strat = sys.argv[2]
     actor2_strat = sys.argv[3]
     if actor1_strat not in available_strats or actor2_strat not in available_strats:
