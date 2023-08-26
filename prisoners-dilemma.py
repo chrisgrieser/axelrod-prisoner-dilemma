@@ -8,11 +8,9 @@ from __future__ import annotations
 import random
 import sys
 
-# ──────────────────────────────────────────────────────────────────────────────
 
-
-def colored_print(color: str, text: str) -> None:
-    """Print colored text."""
+def color_print(color: str, text: str) -> None:
+    """Print colored text with ANSI escape codes for the terminal."""
     colors = {
         "blue": "\033[1;34m",  # ] -- needed to fix confusing the indentationexpr
         "green": "\033[1;32m",  # ]
@@ -21,6 +19,12 @@ def colored_print(color: str, text: str) -> None:
         "reset": "\033[0m",  # ]
     }
     print(colors[color] + text + colors["reset"])
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+available_strats = ["always_cooperate", "always_defect", "random", "alternate", "revenge"]
 
 
 def strategy_to_action(actor_self: str, strategy: str, previous_runs: list[dict[str, str]]) -> str:
@@ -76,28 +80,41 @@ def play_game(actor1_strategy: str, actor2_strategy: str, rounds: int) -> dict[s
 
 def main() -> None:
     """Execute main function."""
-    # read rounds from stdin, default: 1 round
-    rounds = int(sys.argv[1]) if len(sys.argv) > 1 else 1
+    # read & validate input
+    parameters_needed = 3
+    if len(sys.argv) < parameters_needed + 1:  # +1, as argv[0] is script name
+        color_print(
+            "yellow",
+            "Usage: prisoners-dilemma.py <rounds> <actor1_strategy> <actor2_strategy>",
+        )
+        return
+
+    rounds = int(sys.argv[1])
+    actor1_strat = sys.argv[2]
+    actor2_strat = sys.argv[3]
+    if actor1_strat not in available_strats or actor2_strat not in available_strats:
+        color_print(
+            "yellow", "Invalid strategy. Available strategies:" + ", ".join(available_strats),
+        )
+        return
 
     # play the game
-    actor1_strategy = "always_defect"
-    actor2_strategy = "always_cooperate"
-    outcome = play_game(actor1_strategy, actor2_strategy, rounds)
+    outcome = play_game(actor1_strat, actor2_strat, rounds)
 
     # output
-    colored_print("green", "Prisoners' Dilemma")
-    colored_print("green", "──────────────────")
+    color_print("green", "Prisoners' Dilemma")
+    color_print("green", "──────────────────")
 
-    colored_print("blue", "Strategies used:")
-    print("Actor 1:", actor1_strategy)
-    print("Actor 2:", actor2_strategy)
+    color_print("blue", "Strategies used:")
+    print("Actor 1:", actor1_strat)
+    print("Actor 2:", actor2_strat)
     print()
 
-    colored_print("blue", "Rounds:")
+    color_print("blue", "Rounds:")
     print(rounds)
     print()
 
-    colored_print("blue", "Outcome:")
+    color_print("blue", "Outcome:")
     print(f"Actor 1: {outcome['actor1']} years")
     print(f"Actor 2: {outcome['actor2']} years")
 
