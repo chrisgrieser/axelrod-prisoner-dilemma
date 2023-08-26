@@ -1,6 +1,8 @@
 """Simple simulation of the prisoner's dilemma experiment.
 
 Inspired by Axelrod's "Evolution of Cooperation" (1984).
+Prior software:
+    - https://github.com/Axelrod-Python/Axelrod
 """
 
 from __future__ import annotations
@@ -61,13 +63,14 @@ def strategy_to_action(
         if is_first_run:
             action = "cooperate"
         else:
-            action = "defect" if previous_runs[-1][actor_self] == "cooperate" else "defect"
+            last_self_action = previous_runs[-1][actor_self]
+            action = "defect" if last_self_action == "cooperate" else "cooperate"
     elif strategy == "tit-for-tat":
         if is_first_run:
             action = "cooperate"
         else:
             last_opponent_action = previous_runs[-1][opponent]
-            action = "defect" if last_opponent_action == "defect" else "cooperate"
+            action = last_opponent_action
 
     return action
 
@@ -98,7 +101,10 @@ def play_game(actor1_strat: str, actor2_strat: str, rounds: int) -> dict[str, in
 
 
 def main() -> None:
-    """Execute main function."""
+    """Execute main function.
+
+    Usage: python3 prisoners-dilemma.py <rounds> <actor1_strategy> <actor2_strategy>
+    """
     # read & validate input
     parameters_needed = 2
     if len(sys.argv) < parameters_needed + 1:  # +1, as argv[0] is script name
