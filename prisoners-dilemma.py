@@ -27,7 +27,10 @@ def color_print(color: str, text: str) -> None:
 
 # ──────────────────────────────────────────────────────────────────────────────
 
-available_strats = ["always_cooperate", "always_defect", "random", "alternate", "tit-for-tat"]
+
+def strategy_is_valid(strategy: str) -> bool:
+    """Validate a strategy."""
+    return strategy_to_action(0, strategy, []) != ""
 
 
 def strategy_to_action(
@@ -37,16 +40,7 @@ def strategy_to_action(
 ) -> str:
     """Given the actors idendity, their strategy, and the previous rounds.
 
-    Possible actions are:
-        - cooperate
-        - defect
-
-    Available strategies are:
-        - always_cooperate
-        - always_defect
-        - random
-        - alternate: alternate between cooperation and defection
-        - tit-for-tat: begin with cooperation, and copy the opponent's last action
+    If an invalid strategy is provided, returns empty string.
     """
     opponent_id = 1 if actor_self_id == 0 else 0
     is_first_run = len(previous_runs) == 0
@@ -74,29 +68,33 @@ def strategy_to_action(
     return action
 
 
-def play_game(actor1_strat: str, actor2_strat: str, rounds: int) -> list[int]:
-    """Play prisoners' dilemma and return the accumulated outcome for all rounds."""
-    years_in_prison = [-1, 0, 0]  # first value dummy for one-based indexing
+def play_game(strats: tuple[str, str], rounds: int) -> list[int]:
+    """Play prisoners' dilemma and return the accumulated outcome for all rounds.
+
+    Outcomes are based on the archetypical prisoner's dilemma:
+    https://www.wikiwand.com/en/Prisoner's_dilemma#Strategy_for_the_prisoner's_dilemma
+    """
+    years_in_prison = [0, 0]  # accumulate outcomes
     run_history = []  # keep track of previous rounds, i.e. a memory for the actors
 
     for _ in range(rounds):
-        actor1_action = strategy_to_action(1, actor1_strat, run_history)
-        actor2_action = strategy_to_action(2, actor2_strat, run_history)
-        # apply outcome rules for the prisoner's dilemma
-        # DOCS https://www.wikiwand.com/en/Prisoner's_dilemma#Strategy_for_the_prisoner's_dilemma
-        if actor1_action == "cooperate" and actor2_action == "cooperate":
+        actions = (
+            strategy_to_action(0, strats[0], run_history),
+            strategy_to_action(1, strats[1], run_history),
+        )
+        if actions[0] == "cooperate" and actions[1] == "cooperate":
+            years_in_prison[0] += 1
             years_in_prison[1] += 1
-            years_in_prison[2] += 1
-        elif actor1_action == "defect" and actor2_action == "defect":
+        elif actions[0] == "defect" and actions[1] == "defect":
+            years_in_prison[0] += 2
             years_in_prison[1] += 2
-            years_in_prison[2] += 2
-        elif actor1_action == "cooperate" and actor2_action == "defect":
-            years_in_prison[1] += 3
-            years_in_prison[2] += 0
-        elif actor1_action == "defect" and actor2_action == "cooperate":
+        elif actions[0] == "cooperate" and actions[1] == "defect":
+            years_in_prison[0] += 3
             years_in_prison[1] += 0
-            years_in_prison[2] += 3
-        run_history.append((actor1_action, actor2_action))
+        elif actions[0] == "defect" and actions[1] == "cooperate":
+            years_in_prison[0] += 0
+            years_in_prison[1] += 3
+        run_history.append(actions)
 
     return years_in_prison
 
@@ -120,22 +118,21 @@ def main() -> None:
     except ValueError:
         color_print("yellow", "Invalid number of rounds. Please provide a valid integer.")
         return
-    actor1_strat = sys.argv[2]
-    actor2_strat = sys.argv[3]
-    if actor1_strat not in available_strats or actor2_strat not in available_strats:
-        color_print("yellow", "Invalid strategy. Available: \n- " + "\n- ".join(available_strats))
+    strats_used = (sys.argv[2], sys.argv[3])
+    if not strategy_is_valid(strats_used[0]) or not strategy_is_valid(strats_used[1]):
+        color_print("yellow", "Invalid strategy.")
         return
 
     # play the game
-    outcome_years = play_game(actor1_strat, actor2_strat, rounds)
+    outcome_years = play_game(strats_used, rounds)
 
     # print the output to the terminal
     color_print("magenta", "Prisoners' Dilemma")
     color_print("magenta", "────────────────────────")
 
     color_print("blue", "Strategies used:")
-    print("Actor 1:", actor1_strat)
-    print("Actor 2:", actor2_strat)
+    print("Actor 1:", strats_used[0])
+    print("Actor 2:", strats_used[1])
     print()
 
     color_print("blue", "Rounds:")
@@ -143,15 +140,15 @@ def main() -> None:
     print()
 
     color_print("blue", "Outcome:")
-    print(f"Actor 1: {outcome_years[1]} years")
-    print(f"Actor 2: {outcome_years[2]} years")
+    print(f"Actor 1: {outcome_years[0]} years")
+    print(f"Actor 2: {outcome_years[1]} years")
     print()
 
     color_print("blue", "Victory strategy:")
-    if outcome_years[1] > outcome_years[2]:
-        victory_strat = actor1_strat
-    elif outcome_years[1] < outcome_years[2]:
-        victory_strat = actor2_strat
+    if outcome_years[0] > outcome_years[1]:
+        victory_strat = strats_used[0]
+    elif outcome_years[0] < outcome_years[1]:
+        victory_strat = strats_used[1]
     else:
         victory_strat = "Tied"
     color_print("green", victory_strat)
