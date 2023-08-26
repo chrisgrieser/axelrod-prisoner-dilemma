@@ -1,14 +1,15 @@
-"""
-Simple simulation of the prisoner's dilemma experiment by Axelrod 1984
+"""Simple simulation of the prisoner's dilemma experiment.
+
+Inspired by Axelrod's "Evolution of Cooperation" (1984).
 """
 
-import sys
 import random
+import sys
 
 # ──────────────────────────────────────────────────────────────────────────────
 
-
-def colored_print(color: str, text: str):
+def colored_print(color: str, text: str) -> None:
+    """Print colored text."""
     colors = {
         "blue": "\033[1;34m",  # ] -- needed to fix confusing the indentationexpr
         "green": "\033[1;32m",  # ]
@@ -19,22 +20,24 @@ def colored_print(color: str, text: str):
     print(colors[color] + text + colors["reset"])
 
 
-def strategyToAction(strategy: str):
+def strategy_to_action(strategy: str) -> str:
+    """Given a strategy, return an action, either "cooperate" or "defect"."""
     if strategy == "always_cooperate":
         return "cooperate"
-    elif strategy == "always_defect":
+    if strategy == "always_defect":
         return "defect"
-    elif strategy == "random":
+    if strategy == "random":
         return random.choice(["cooperate", "defect"])
-    pass
+    return ""
 
 
-def play_game(actor1_strategy: str, actor2_strategy: str, rounds: int):
+def play_game(actor1_strategy: str, actor2_strategy: str, rounds: int) -> dict:
+    """Play prisoners' dilemma and return the accumulated outcome for all rounds."""
     outcome = {"actor1": 0, "actor2": 0}
 
     for _ in range(rounds):
-        actor1_action = strategyToAction(actor1_strategy)
-        actor2_action = strategyToAction(actor2_strategy)
+        actor1_action = strategy_to_action(actor1_strategy)
+        actor2_action = strategy_to_action(actor2_strategy)
         if actor1_action == "cooperate" and actor2_action == "cooperate":
             outcome["actor1"] += 1
             outcome["actor2"] += 1
@@ -50,7 +53,8 @@ def play_game(actor1_strategy: str, actor2_strategy: str, rounds: int):
     return outcome
 
 
-def main():
+def main() -> None:
+    """Execute main function."""
     # read rounds from stdin, default: 1 round
     rounds = int(sys.argv[1]) if len(sys.argv) > 1 else 1
 
@@ -78,5 +82,5 @@ def main():
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-
-main()
+if __name__ == "__main__":
+    main()
