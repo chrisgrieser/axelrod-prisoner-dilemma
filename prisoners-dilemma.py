@@ -2,17 +2,18 @@
 Simple simulation of the prisoner's dilemma experiment by Axelrod 1984
 """
 
+# ──────────────────────────────────────────────────────────────────────────────
+
 config = {
     "rounds": 1,
-    "game": "prisoners-dilemma",
 }
 
 game_history = []
 
-# ───────────────────────────────────────────────────────────────────────────────
+# ──────────────────────────────────────────────────────────────────────────────
 
 
-def play_game(actor_1_strategy, actor_2_strategy):
+def play_game(actor_1_strategy: str, actor_2_strategy: str):
     outcome = {"actor_1": -1, "actor_2": -1}
 
     if actor_1_strategy == "cooperate" and actor_2_strategy == "cooperate":
@@ -37,8 +38,17 @@ def main():
 
     actor_1_strategy = "defect"
     actor_2_strategy = "cooperate"
+    print("Strategies")
     print("Actor 1:", actor_1_strategy)
     print("Actor 2:", actor_2_strategy)
-
     outcome = play_game(actor_1_strategy, actor_2_strategy)
-    print("Outcome:", outcome)
+
+    print()
+    print("Outcome")
+    print(f"Actor 1: {outcome['actor_1']} years")
+    print(f"Actor 2: {outcome['actor_2']} years")
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+
+main()
