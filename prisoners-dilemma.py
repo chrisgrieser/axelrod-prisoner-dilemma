@@ -3,6 +3,7 @@ Simple simulation of the prisoner's dilemma experiment by Axelrod 1984
 """
 
 import sys
+import random
 
 # ──────────────────────────────────────────────────────────────────────────────
 
@@ -18,40 +19,53 @@ def colored_print(color: str, text: str):
     print(colors[color] + text + colors["reset"])
 
 
-def play_game(actor_1_strategy: str, actor_2_strategy: str, rounds: int):
-    outcome = {"actor_1": 0, "actor_2": 0}
+def strategyToAction(strategy: str):
+    if strategy == "always_cooperate":
+        return "cooperate"
+    elif strategy == "always_defect":
+        return "defect"
+    elif strategy == "random":
+        return random.choice(["cooperate", "defect"])
+    pass
+
+
+def play_game(actor1_strategy: str, actor2_strategy: str, rounds: int):
+    outcome = {"actor1": 0, "actor2": 0}
+
     for _ in range(rounds):
-        if actor_1_strategy == "cooperate" and actor_2_strategy == "cooperate":
-            outcome["actor_1"] += 1
-            outcome["actor_2"] += 1
-        elif actor_1_strategy == "defect" and actor_2_strategy == "defect":
-            outcome["actor_1"] += 2
-            outcome["actor_2"] += 2
-        elif actor_1_strategy == "cooperate" and actor_2_strategy == "defect":
-            outcome["actor_1"] += 3
-            outcome["actor_2"] += 0
-        elif actor_1_strategy == "defect" and actor_2_strategy == "cooperate":
-            outcome["actor_1"] += 0
-            outcome["actor_2"] += 3
+        actor1_action = strategyToAction(actor1_strategy)
+        actor2_action = strategyToAction(actor2_strategy)
+        if actor1_action == "cooperate" and actor2_action == "cooperate":
+            outcome["actor1"] += 1
+            outcome["actor2"] += 1
+        elif actor1_action == "defect" and actor2_action == "defect":
+            outcome["actor1"] += 2
+            outcome["actor2"] += 2
+        elif actor1_action == "cooperate" and actor2_action == "defect":
+            outcome["actor1"] += 3
+            outcome["actor2"] += 0
+        elif actor1_action == "defect" and actor2_action == "cooperate":
+            outcome["actor1"] += 0
+            outcome["actor2"] += 3
     return outcome
 
 
 def main():
-    # config
+    # read rounds from stdin, default: 1 round
     rounds = int(sys.argv[1]) if len(sys.argv) > 1 else 1
 
     # play the game
-    actor_1_strategy = "defect"
-    actor_2_strategy = "cooperate"
-    outcome = play_game(actor_1_strategy, actor_2_strategy, rounds)
+    actor1_strategy = "always_defect"
+    actor2_strategy = "always_cooperate"
+    outcome = play_game(actor1_strategy, actor2_strategy, rounds)
 
     # output
     colored_print("green", "Prisoners' Dilemma")
     colored_print("green", "──────────────────")
 
-    colored_print("blue", "Strategies:")
-    print("Actor 1:", actor_1_strategy)
-    print("Actor 2:", actor_2_strategy)
+    colored_print("blue", "Strategies used:")
+    print("Actor 1:", actor1_strategy)
+    print("Actor 2:", actor2_strategy)
     print()
 
     colored_print("blue", "Rounds:")
@@ -59,8 +73,8 @@ def main():
     print()
 
     colored_print("blue", "Outcome:")
-    print(f"Actor 1: {outcome['actor_1']} years")
-    print(f"Actor 2: {outcome['actor_2']} years")
+    print(f"Actor 1: {outcome['actor1']} years")
+    print(f"Actor 2: {outcome['actor2']} years")
 
 
 # ──────────────────────────────────────────────────────────────────────────────
