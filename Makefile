@@ -2,7 +2,7 @@
 #───────────────────────────────────────────────────────────────────────────────
 
 docs:
-	pdoc *.py --output-directory=./api-docs
+	pdoc *.py --output-directory=./docs
 
 
 
