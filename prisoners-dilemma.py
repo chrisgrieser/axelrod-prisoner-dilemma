@@ -9,6 +9,8 @@ from __future__ import annotations
 import random
 import sys
 
+# ──────────────────────────────────────────────────────────────────────────────
+
 
 def color_print(color: str, text: str) -> None:
     """Print colored text with ANSI escape codes for the terminal."""
@@ -24,7 +26,6 @@ def color_print(color: str, text: str) -> None:
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-
 
 available_strats = ["always_cooperate", "always_defect", "random", "alternate", "tit-for-tat"]
 
@@ -126,7 +127,7 @@ def main() -> None:
     # play the game
     outcome = play_game(actor1_strat, actor2_strat, rounds)
 
-    # output
+    # print the output to the terminal
     color_print("magenta", "Prisoners' Dilemma")
     color_print("magenta", "────────────────────────")
 
