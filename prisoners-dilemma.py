@@ -3,10 +3,13 @@
 Inspired by Axelrod's "Evolution of Cooperation" (1984).
 """
 
+from __future__ import annotations
+
 import random
 import sys
 
 # ──────────────────────────────────────────────────────────────────────────────
+
 
 def colored_print(color: str, text: str) -> None:
     """Print colored text."""
@@ -31,7 +34,7 @@ def strategy_to_action(strategy: str) -> str:
     return ""
 
 
-def play_game(actor1_strategy: str, actor2_strategy: str, rounds: int) -> dict:
+def play_game(actor1_strategy: str, actor2_strategy: str, rounds: int) -> dict[str, int]:
     """Play prisoners' dilemma and return the accumulated outcome for all rounds."""
     outcome = {"actor1": 0, "actor2": 0}
 
@@ -82,5 +85,6 @@ def main() -> None:
 
 
 # ──────────────────────────────────────────────────────────────────────────────
+
 if __name__ == "__main__":
     main()
