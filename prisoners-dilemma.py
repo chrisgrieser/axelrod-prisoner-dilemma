@@ -32,8 +32,8 @@ def color_print(color: str, text: str) -> None:
 def play_game(strats: tuple[str, str], rounds: int) -> list[int]:
     """Play prisoners' dilemma and return the accumulated outcome for all rounds.
 
-    Outcomes are based on the archetypical prisoner's dilemma:
-    <https://www.wikiwand.com/en/Prisoner's_dilemma#Strategy_for_the_prisoner's_dilemma>
+    [Outcomes are based on the archetypical prisoner's
+     dilemma.](https://www.wikiwand.com/en/Prisoner's_dilemma#Strategy_for_the_prisoner's_dilemma)
     """
     years_in_prison = [0, 0]  # accumulate outcomes
     run_history = []  # keep track of previous rounds, i.e. a memory for the actors
@@ -63,7 +63,7 @@ def play_game(strats: tuple[str, str], rounds: int) -> list[int]:
 def main() -> None:
     """Validate input, play the game, and print the output for the terminal.
 
-    Main Usage: 
+    Main Usage:
     python3 prisoners-dilemma.py <rounds> <actor1_strategy> <actor2_strategy>
 
     Help:

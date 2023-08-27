@@ -33,16 +33,22 @@
             <h2>API Documentation</h2>
                 <ul class="memberlist">
             <li>
-                    <a class="function" href="#strat_alternate">strat_alternate</a>
+                    <a class="function" href="#alternate">alternate</a>
             </li>
             <li>
-                    <a class="function" href="#strat_tit_for_tat">strat_tit_for_tat</a>
+                    <a class="function" href="#tit_for_tat">tit_for_tat</a>
             </li>
             <li>
-                    <a class="function" href="#strat_unforgiving">strat_unforgiving</a>
+                    <a class="function" href="#unforgiving">unforgiving</a>
+            </li>
+            <li>
+                    <a class="function" href="#opportunist">opportunist</a>
             </li>
             <li>
                     <a class="variable" href="#strategy_funcs">strategy_funcs</a>
+            </li>
+            <li>
+                    <a class="function" href="#describe_all_strategies">describe_all_strategies</a>
             </li>
     </ul>
 
@@ -76,63 +82,106 @@ strategies    </h1>
 </span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="c1"># ──────────────────────────────────────────────────────────────────────────────</span>
 </span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a>
 </span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>
-</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="k">def</span> <span class="nf">strat_alternate</span><span class="p">(</span><span class="n">self_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">prev_runs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Alternate between cooperating and defecting.&quot;&quot;&quot;</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>    <span class="n">is_first_run</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">prev_runs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>    <span class="k">if</span> <span class="n">is_first_run</span><span class="p">:</span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>        <span class="k">return</span> <span class="s2">&quot;cooperate&quot;</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>    <span class="n">last_self_action</span> <span class="o">=</span> <span class="n">prev_runs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">self_id</span><span class="p">]</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>    <span class="k">return</span> <span class="s2">&quot;defect&quot;</span> <span class="k">if</span> <span class="n">last_self_action</span> <span class="o">==</span> <span class="s2">&quot;cooperate&quot;</span> <span class="k">else</span> <span class="s2">&quot;cooperate&quot;</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>
-</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="k">def</span> <span class="nf">strat_tit_for_tat</span><span class="p">(</span><span class="n">self_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">prev_runs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Mirrors last action taken by the opponent.&quot;&quot;&quot;</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>    <span class="n">is_first_run</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">prev_runs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>    <span class="k">if</span> <span class="n">is_first_run</span><span class="p">:</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>        <span class="k">return</span> <span class="s2">&quot;cooperate&quot;</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>    <span class="n">opponent_id</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">self_id</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>    <span class="n">last_opponent_action</span> <span class="o">=</span> <span class="n">prev_runs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">opponent_id</span><span class="p">]</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>    <span class="k">return</span> <span class="n">last_opponent_action</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="k">def</span> <span class="nf">__opponent_past_actions</span><span class="p">(</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>    <span class="n">self_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>    <span class="n">prev_runs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a list of the opponent&#39;s last actions.&quot;&quot;&quot;</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>    <span class="n">opponent_id</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">self_id</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>    <span class="n">past_opponent_actions</span> <span class="o">=</span> <span class="p">(</span><span class="n">run</span><span class="p">[</span><span class="n">opponent_id</span><span class="p">]</span> <span class="k">for</span> <span class="n">run</span> <span class="ow">in</span> <span class="n">prev_runs</span><span class="p">)</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">past_opponent_actions</span><span class="p">)</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="k">def</span> <span class="nf">__is_first_run</span><span class="p">(</span><span class="n">prev_runs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">prev_runs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="c1"># ──────────────────────────────────────────────────────────────────────────────</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>
 </span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>
-</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a><span class="k">def</span> <span class="nf">strat_unforgiving</span><span class="p">(</span><span class="n">self_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">prev_runs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;If the opponent has defected at any time in the past, defect.&quot;&quot;&quot;</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>    <span class="n">is_first_run</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">prev_runs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>    <span class="k">if</span> <span class="n">is_first_run</span><span class="p">:</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>        <span class="k">return</span> <span class="s2">&quot;cooperate&quot;</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>    <span class="n">opponent_id</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">self_id</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>    <span class="n">prev_opponnent_actions</span> <span class="o">=</span> <span class="p">(</span><span class="n">run</span><span class="p">[</span><span class="n">opponent_id</span><span class="p">]</span> <span class="k">for</span> <span class="n">run</span> <span class="ow">in</span> <span class="n">prev_runs</span><span class="p">)</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>    <span class="n">opponent_has_defected_once</span> <span class="o">=</span> <span class="s2">&quot;defect&quot;</span> <span class="ow">in</span> <span class="n">prev_opponnent_actions</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>    <span class="k">return</span> <span class="s2">&quot;defect&quot;</span> <span class="k">if</span> <span class="n">opponent_has_defected_once</span> <span class="k">else</span> <span class="s2">&quot;cooperate&quot;</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a><span class="n">strategy_funcs</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>    <span class="s2">&quot;always_cooperate&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="s2">&quot;cooperate&quot;</span><span class="p">,</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>    <span class="s2">&quot;always_defect&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="s2">&quot;defect&quot;</span><span class="p">,</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>    <span class="s2">&quot;random&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="s2">&quot;cooperate&quot;</span><span class="p">,</span> <span class="s2">&quot;defect&quot;</span><span class="p">]),</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>    <span class="s2">&quot;alternate&quot;</span><span class="p">:</span> <span class="n">strat_alternate</span><span class="p">,</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>    <span class="s2">&quot;tit-for-tat&quot;</span><span class="p">:</span> <span class="n">strat_tit_for_tat</span><span class="p">,</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>    <span class="s2">&quot;unforgiving&quot;</span><span class="p">:</span> <span class="n">strat_unforgiving</span><span class="p">,</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a><span class="p">}</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a><span class="k">def</span> <span class="nf">alternate</span><span class="p">(</span><span class="n">self_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">prev_runs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Alternate between cooperating and defecting.&quot;&quot;&quot;</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>    <span class="k">if</span> <span class="n">__is_first_run</span><span class="p">(</span><span class="n">prev_runs</span><span class="p">):</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>        <span class="k">return</span> <span class="s2">&quot;cooperate&quot;</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>    <span class="n">last_own_action</span> <span class="o">=</span> <span class="n">prev_runs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">self_id</span><span class="p">]</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>    <span class="k">return</span> <span class="s2">&quot;defect&quot;</span> <span class="k">if</span> <span class="n">last_own_action</span> <span class="o">==</span> <span class="s2">&quot;cooperate&quot;</span> <span class="k">else</span> <span class="s2">&quot;cooperate&quot;</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>
+</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>
+</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a><span class="k">def</span> <span class="nf">tit_for_tat</span><span class="p">(</span><span class="n">self_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">prev_runs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Mirrors last action taken by the opponent.&quot;&quot;&quot;</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>    <span class="k">if</span> <span class="n">__is_first_run</span><span class="p">(</span><span class="n">prev_runs</span><span class="p">):</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>        <span class="k">return</span> <span class="s2">&quot;cooperate&quot;</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>    <span class="n">last_opponent_action</span> <span class="o">=</span> <span class="n">__opponent_past_actions</span><span class="p">(</span><span class="n">self_id</span><span class="p">,</span> <span class="n">prev_runs</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>    <span class="k">return</span> <span class="n">last_opponent_action</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a><span class="k">def</span> <span class="nf">unforgiving</span><span class="p">(</span><span class="n">self_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">prev_runs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;If the opponent has defected at any time in the past, defect.&quot;&quot;&quot;</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>    <span class="k">if</span> <span class="n">__is_first_run</span><span class="p">(</span><span class="n">prev_runs</span><span class="p">):</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>        <span class="k">return</span> <span class="s2">&quot;cooperate&quot;</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>    <span class="n">opponent_has_defected_once</span> <span class="o">=</span> <span class="s2">&quot;defect&quot;</span> <span class="ow">in</span> <span class="n">__opponent_past_actions</span><span class="p">(</span><span class="n">self_id</span><span class="p">,</span> <span class="n">prev_runs</span><span class="p">)</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>    <span class="k">return</span> <span class="s2">&quot;defect&quot;</span> <span class="k">if</span> <span class="n">opponent_has_defected_once</span> <span class="k">else</span> <span class="s2">&quot;cooperate&quot;</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>
+</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>
+</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a><span class="k">def</span> <span class="nf">opportunist</span><span class="p">(</span><span class="n">self_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">prev_runs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Defect if the opponent has always cooperated recently.&quot;&quot;&quot;</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>    <span class="n">min_runs</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># number of runs considered as &quot;recently&quot;</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a>    <span class="n">is_first_few_runs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">prev_runs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">min_runs</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>    <span class="k">if</span> <span class="n">is_first_few_runs</span><span class="p">:</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>        <span class="k">return</span> <span class="s2">&quot;cooperate&quot;</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>    <span class="n">last_few_runs_opp_actions</span> <span class="o">=</span> <span class="n">__opponent_past_actions</span><span class="p">(</span><span class="n">self_id</span><span class="p">,</span> <span class="n">prev_runs</span><span class="p">)[</span><span class="o">-</span><span class="n">min_runs</span><span class="p">:]</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>    <span class="n">opp_cooperated_recently</span> <span class="o">=</span> <span class="s2">&quot;defect&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">last_few_runs_opp_actions</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>    <span class="k">return</span> <span class="s2">&quot;defect&quot;</span> <span class="k">if</span> <span class="n">opp_cooperated_recently</span> <span class="k">else</span> <span class="s2">&quot;cooperate&quot;</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>
+</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a><span class="c1"># ──────────────────────────────────────────────────────────────────────────────</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>
+</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>
+</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a><span class="n">strategy_funcs</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>    <span class="s2">&quot;always_cooperate&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="s2">&quot;cooperate&quot;</span><span class="p">,</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>    <span class="s2">&quot;always_defect&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="s2">&quot;defect&quot;</span><span class="p">,</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>    <span class="s2">&quot;random&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="s2">&quot;cooperate&quot;</span><span class="p">,</span> <span class="s2">&quot;defect&quot;</span><span class="p">]),</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>    <span class="s2">&quot;alternate&quot;</span><span class="p">:</span> <span class="n">alternate</span><span class="p">,</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>    <span class="s2">&quot;tit_for_tat&quot;</span><span class="p">:</span> <span class="n">tit_for_tat</span><span class="p">,</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a>    <span class="s2">&quot;unforgiving&quot;</span><span class="p">:</span> <span class="n">unforgiving</span><span class="p">,</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a>    <span class="s2">&quot;opportunist&quot;</span><span class="p">:</span> <span class="n">opportunist</span><span class="p">,</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a><span class="p">}</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a>
+</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a>
+</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a><span class="k">def</span> <span class="nf">describe_all_strategies</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Describe all available strategies.</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>
+</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a><span class="sd">    Descriptions are derived from the docstrings of the strategy functions.</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a>    <span class="n">out</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a>    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">strategy_func</span> <span class="ow">in</span> <span class="n">strategy_funcs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a>        <span class="n">desc</span> <span class="o">=</span> <span class="n">strategy_func</span><span class="o">.</span><span class="vm">__doc__</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos">84</span></a>        <span class="k">if</span> <span class="n">desc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos">85</span></a>            <span class="n">out</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;- </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos">86</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos">87</span></a>            <span class="n">out</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;- </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">strategy_func</span><span class="o">.</span><span class="vm">__doc__</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos">88</span></a>    <span class="k">return</span> <span class="n">out</span>
 </span></pre></div>
 
 
             </section>
-                <section id="strat_alternate">
-                            <input id="strat_alternate-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                <section id="alternate">
+                            <input id="alternate-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">strat_alternate</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">self_id</span><span class="p">:</span> <span class="nb">int</span>, </span><span class="param"><span class="n">prev_runs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
+        <span class="name">alternate</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">self_id</span><span class="p">:</span> <span class="nb">int</span>, </span><span class="param"><span class="n">prev_runs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
 
-                <label class="view-source-button" for="strat_alternate-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="alternate-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#strat_alternate"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="strat_alternate-11"><a href="#strat_alternate-11"><span class="linenos">11</span></a><span class="k">def</span> <span class="nf">strat_alternate</span><span class="p">(</span><span class="n">self_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">prev_runs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="strat_alternate-12"><a href="#strat_alternate-12"><span class="linenos">12</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Alternate between cooperating and defecting.&quot;&quot;&quot;</span>
-</span><span id="strat_alternate-13"><a href="#strat_alternate-13"><span class="linenos">13</span></a>    <span class="n">is_first_run</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">prev_runs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
-</span><span id="strat_alternate-14"><a href="#strat_alternate-14"><span class="linenos">14</span></a>    <span class="k">if</span> <span class="n">is_first_run</span><span class="p">:</span>
-</span><span id="strat_alternate-15"><a href="#strat_alternate-15"><span class="linenos">15</span></a>        <span class="k">return</span> <span class="s2">&quot;cooperate&quot;</span>
-</span><span id="strat_alternate-16"><a href="#strat_alternate-16"><span class="linenos">16</span></a>    <span class="n">last_self_action</span> <span class="o">=</span> <span class="n">prev_runs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">self_id</span><span class="p">]</span>
-</span><span id="strat_alternate-17"><a href="#strat_alternate-17"><span class="linenos">17</span></a>    <span class="k">return</span> <span class="s2">&quot;defect&quot;</span> <span class="k">if</span> <span class="n">last_self_action</span> <span class="o">==</span> <span class="s2">&quot;cooperate&quot;</span> <span class="k">else</span> <span class="s2">&quot;cooperate&quot;</span>
+    <a class="headerlink" href="#alternate"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="alternate-28"><a href="#alternate-28"><span class="linenos">28</span></a><span class="k">def</span> <span class="nf">alternate</span><span class="p">(</span><span class="n">self_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">prev_runs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="alternate-29"><a href="#alternate-29"><span class="linenos">29</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Alternate between cooperating and defecting.&quot;&quot;&quot;</span>
+</span><span id="alternate-30"><a href="#alternate-30"><span class="linenos">30</span></a>    <span class="k">if</span> <span class="n">__is_first_run</span><span class="p">(</span><span class="n">prev_runs</span><span class="p">):</span>
+</span><span id="alternate-31"><a href="#alternate-31"><span class="linenos">31</span></a>        <span class="k">return</span> <span class="s2">&quot;cooperate&quot;</span>
+</span><span id="alternate-32"><a href="#alternate-32"><span class="linenos">32</span></a>    <span class="n">last_own_action</span> <span class="o">=</span> <span class="n">prev_runs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">self_id</span><span class="p">]</span>
+</span><span id="alternate-33"><a href="#alternate-33"><span class="linenos">33</span></a>    <span class="k">return</span> <span class="s2">&quot;defect&quot;</span> <span class="k">if</span> <span class="n">last_own_action</span> <span class="o">==</span> <span class="s2">&quot;cooperate&quot;</span> <span class="k">else</span> <span class="s2">&quot;cooperate&quot;</span>
 </span></pre></div>
 
 
@@ -141,25 +190,23 @@ strategies    </h1>
 
 
                 </section>
-                <section id="strat_tit_for_tat">
-                            <input id="strat_tit_for_tat-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                <section id="tit_for_tat">
+                            <input id="tit_for_tat-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">strat_tit_for_tat</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">self_id</span><span class="p">:</span> <span class="nb">int</span>, </span><span class="param"><span class="n">prev_runs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
+        <span class="name">tit_for_tat</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">self_id</span><span class="p">:</span> <span class="nb">int</span>, </span><span class="param"><span class="n">prev_runs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
 
-                <label class="view-source-button" for="strat_tit_for_tat-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="tit_for_tat-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#strat_tit_for_tat"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="strat_tit_for_tat-19"><a href="#strat_tit_for_tat-19"><span class="linenos">19</span></a><span class="k">def</span> <span class="nf">strat_tit_for_tat</span><span class="p">(</span><span class="n">self_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">prev_runs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="strat_tit_for_tat-20"><a href="#strat_tit_for_tat-20"><span class="linenos">20</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Mirrors last action taken by the opponent.&quot;&quot;&quot;</span>
-</span><span id="strat_tit_for_tat-21"><a href="#strat_tit_for_tat-21"><span class="linenos">21</span></a>    <span class="n">is_first_run</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">prev_runs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
-</span><span id="strat_tit_for_tat-22"><a href="#strat_tit_for_tat-22"><span class="linenos">22</span></a>    <span class="k">if</span> <span class="n">is_first_run</span><span class="p">:</span>
-</span><span id="strat_tit_for_tat-23"><a href="#strat_tit_for_tat-23"><span class="linenos">23</span></a>        <span class="k">return</span> <span class="s2">&quot;cooperate&quot;</span>
-</span><span id="strat_tit_for_tat-24"><a href="#strat_tit_for_tat-24"><span class="linenos">24</span></a>    <span class="n">opponent_id</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">self_id</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
-</span><span id="strat_tit_for_tat-25"><a href="#strat_tit_for_tat-25"><span class="linenos">25</span></a>    <span class="n">last_opponent_action</span> <span class="o">=</span> <span class="n">prev_runs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">opponent_id</span><span class="p">]</span>
-</span><span id="strat_tit_for_tat-26"><a href="#strat_tit_for_tat-26"><span class="linenos">26</span></a>    <span class="k">return</span> <span class="n">last_opponent_action</span>
+    <a class="headerlink" href="#tit_for_tat"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="tit_for_tat-36"><a href="#tit_for_tat-36"><span class="linenos">36</span></a><span class="k">def</span> <span class="nf">tit_for_tat</span><span class="p">(</span><span class="n">self_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">prev_runs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="tit_for_tat-37"><a href="#tit_for_tat-37"><span class="linenos">37</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Mirrors last action taken by the opponent.&quot;&quot;&quot;</span>
+</span><span id="tit_for_tat-38"><a href="#tit_for_tat-38"><span class="linenos">38</span></a>    <span class="k">if</span> <span class="n">__is_first_run</span><span class="p">(</span><span class="n">prev_runs</span><span class="p">):</span>
+</span><span id="tit_for_tat-39"><a href="#tit_for_tat-39"><span class="linenos">39</span></a>        <span class="k">return</span> <span class="s2">&quot;cooperate&quot;</span>
+</span><span id="tit_for_tat-40"><a href="#tit_for_tat-40"><span class="linenos">40</span></a>    <span class="n">last_opponent_action</span> <span class="o">=</span> <span class="n">__opponent_past_actions</span><span class="p">(</span><span class="n">self_id</span><span class="p">,</span> <span class="n">prev_runs</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span><span id="tit_for_tat-41"><a href="#tit_for_tat-41"><span class="linenos">41</span></a>    <span class="k">return</span> <span class="n">last_opponent_action</span>
 </span></pre></div>
 
 
@@ -168,26 +215,23 @@ strategies    </h1>
 
 
                 </section>
-                <section id="strat_unforgiving">
-                            <input id="strat_unforgiving-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                <section id="unforgiving">
+                            <input id="unforgiving-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">strat_unforgiving</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">self_id</span><span class="p">:</span> <span class="nb">int</span>, </span><span class="param"><span class="n">prev_runs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
+        <span class="name">unforgiving</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">self_id</span><span class="p">:</span> <span class="nb">int</span>, </span><span class="param"><span class="n">prev_runs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
 
-                <label class="view-source-button" for="strat_unforgiving-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="unforgiving-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#strat_unforgiving"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="strat_unforgiving-28"><a href="#strat_unforgiving-28"><span class="linenos">28</span></a><span class="k">def</span> <span class="nf">strat_unforgiving</span><span class="p">(</span><span class="n">self_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">prev_runs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="strat_unforgiving-29"><a href="#strat_unforgiving-29"><span class="linenos">29</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;If the opponent has defected at any time in the past, defect.&quot;&quot;&quot;</span>
-</span><span id="strat_unforgiving-30"><a href="#strat_unforgiving-30"><span class="linenos">30</span></a>    <span class="n">is_first_run</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">prev_runs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
-</span><span id="strat_unforgiving-31"><a href="#strat_unforgiving-31"><span class="linenos">31</span></a>    <span class="k">if</span> <span class="n">is_first_run</span><span class="p">:</span>
-</span><span id="strat_unforgiving-32"><a href="#strat_unforgiving-32"><span class="linenos">32</span></a>        <span class="k">return</span> <span class="s2">&quot;cooperate&quot;</span>
-</span><span id="strat_unforgiving-33"><a href="#strat_unforgiving-33"><span class="linenos">33</span></a>    <span class="n">opponent_id</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">self_id</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
-</span><span id="strat_unforgiving-34"><a href="#strat_unforgiving-34"><span class="linenos">34</span></a>    <span class="n">prev_opponnent_actions</span> <span class="o">=</span> <span class="p">(</span><span class="n">run</span><span class="p">[</span><span class="n">opponent_id</span><span class="p">]</span> <span class="k">for</span> <span class="n">run</span> <span class="ow">in</span> <span class="n">prev_runs</span><span class="p">)</span>
-</span><span id="strat_unforgiving-35"><a href="#strat_unforgiving-35"><span class="linenos">35</span></a>    <span class="n">opponent_has_defected_once</span> <span class="o">=</span> <span class="s2">&quot;defect&quot;</span> <span class="ow">in</span> <span class="n">prev_opponnent_actions</span>
-</span><span id="strat_unforgiving-36"><a href="#strat_unforgiving-36"><span class="linenos">36</span></a>    <span class="k">return</span> <span class="s2">&quot;defect&quot;</span> <span class="k">if</span> <span class="n">opponent_has_defected_once</span> <span class="k">else</span> <span class="s2">&quot;cooperate&quot;</span>
+    <a class="headerlink" href="#unforgiving"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="unforgiving-44"><a href="#unforgiving-44"><span class="linenos">44</span></a><span class="k">def</span> <span class="nf">unforgiving</span><span class="p">(</span><span class="n">self_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">prev_runs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="unforgiving-45"><a href="#unforgiving-45"><span class="linenos">45</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;If the opponent has defected at any time in the past, defect.&quot;&quot;&quot;</span>
+</span><span id="unforgiving-46"><a href="#unforgiving-46"><span class="linenos">46</span></a>    <span class="k">if</span> <span class="n">__is_first_run</span><span class="p">(</span><span class="n">prev_runs</span><span class="p">):</span>
+</span><span id="unforgiving-47"><a href="#unforgiving-47"><span class="linenos">47</span></a>        <span class="k">return</span> <span class="s2">&quot;cooperate&quot;</span>
+</span><span id="unforgiving-48"><a href="#unforgiving-48"><span class="linenos">48</span></a>    <span class="n">opponent_has_defected_once</span> <span class="o">=</span> <span class="s2">&quot;defect&quot;</span> <span class="ow">in</span> <span class="n">__opponent_past_actions</span><span class="p">(</span><span class="n">self_id</span><span class="p">,</span> <span class="n">prev_runs</span><span class="p">)</span>
+</span><span id="unforgiving-49"><a href="#unforgiving-49"><span class="linenos">49</span></a>    <span class="k">return</span> <span class="s2">&quot;defect&quot;</span> <span class="k">if</span> <span class="n">opponent_has_defected_once</span> <span class="k">else</span> <span class="s2">&quot;cooperate&quot;</span>
 </span></pre></div>
 
 
@@ -196,17 +240,79 @@ strategies    </h1>
 
 
                 </section>
+                <section id="opportunist">
+                            <input id="opportunist-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">opportunist</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">self_id</span><span class="p">:</span> <span class="nb">int</span>, </span><span class="param"><span class="n">prev_runs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
+
+                <label class="view-source-button" for="opportunist-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#opportunist"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="opportunist-52"><a href="#opportunist-52"><span class="linenos">52</span></a><span class="k">def</span> <span class="nf">opportunist</span><span class="p">(</span><span class="n">self_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">prev_runs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="opportunist-53"><a href="#opportunist-53"><span class="linenos">53</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Defect if the opponent has always cooperated recently.&quot;&quot;&quot;</span>
+</span><span id="opportunist-54"><a href="#opportunist-54"><span class="linenos">54</span></a>    <span class="n">min_runs</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># number of runs considered as &quot;recently&quot;</span>
+</span><span id="opportunist-55"><a href="#opportunist-55"><span class="linenos">55</span></a>    <span class="n">is_first_few_runs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">prev_runs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">min_runs</span>
+</span><span id="opportunist-56"><a href="#opportunist-56"><span class="linenos">56</span></a>    <span class="k">if</span> <span class="n">is_first_few_runs</span><span class="p">:</span>
+</span><span id="opportunist-57"><a href="#opportunist-57"><span class="linenos">57</span></a>        <span class="k">return</span> <span class="s2">&quot;cooperate&quot;</span>
+</span><span id="opportunist-58"><a href="#opportunist-58"><span class="linenos">58</span></a>    <span class="n">last_few_runs_opp_actions</span> <span class="o">=</span> <span class="n">__opponent_past_actions</span><span class="p">(</span><span class="n">self_id</span><span class="p">,</span> <span class="n">prev_runs</span><span class="p">)[</span><span class="o">-</span><span class="n">min_runs</span><span class="p">:]</span>
+</span><span id="opportunist-59"><a href="#opportunist-59"><span class="linenos">59</span></a>    <span class="n">opp_cooperated_recently</span> <span class="o">=</span> <span class="s2">&quot;defect&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">last_few_runs_opp_actions</span>
+</span><span id="opportunist-60"><a href="#opportunist-60"><span class="linenos">60</span></a>    <span class="k">return</span> <span class="s2">&quot;defect&quot;</span> <span class="k">if</span> <span class="n">opp_cooperated_recently</span> <span class="k">else</span> <span class="s2">&quot;cooperate&quot;</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Defect if the opponent has always cooperated recently.</p>
+</div>
+
+
+                </section>
                 <section id="strategy_funcs">
                     <div class="attr variable">
             <span class="name">strategy_funcs</span>        =
 <input id="strategy_funcs-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="strategy_funcs-view-value"></label><span class="default_value">{&#39;always_cooperate&#39;: &lt;function &lt;lambda&gt;&gt;, &#39;always_defect&#39;: &lt;function &lt;lambda&gt;&gt;, &#39;random&#39;: &lt;function &lt;lambda&gt;&gt;, &#39;alternate&#39;: &lt;function strat_alternate&gt;, &#39;tit-for-tat&#39;: &lt;function strat_tit_for_tat&gt;, &#39;unforgiving&#39;: &lt;function strat_unforgiving&gt;}</span>
+            <label class="view-value-button pdoc-button" for="strategy_funcs-view-value"></label><span class="default_value">{&#39;always_cooperate&#39;: &lt;function &lt;lambda&gt;&gt;, &#39;always_defect&#39;: &lt;function &lt;lambda&gt;&gt;, &#39;random&#39;: &lt;function &lt;lambda&gt;&gt;, &#39;alternate&#39;: &lt;function alternate&gt;, &#39;tit_for_tat&#39;: &lt;function tit_for_tat&gt;, &#39;unforgiving&#39;: &lt;function unforgiving&gt;, &#39;opportunist&#39;: &lt;function opportunist&gt;}</span>
 
         
     </div>
     <a class="headerlink" href="#strategy_funcs"></a>
     
     
+
+                </section>
+                <section id="describe_all_strategies">
+                            <input id="describe_all_strategies-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">describe_all_strategies</span><span class="signature pdoc-code condensed">(<span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
+
+                <label class="view-source-button" for="describe_all_strategies-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#describe_all_strategies"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="describe_all_strategies-77"><a href="#describe_all_strategies-77"><span class="linenos">77</span></a><span class="k">def</span> <span class="nf">describe_all_strategies</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="describe_all_strategies-78"><a href="#describe_all_strategies-78"><span class="linenos">78</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Describe all available strategies.</span>
+</span><span id="describe_all_strategies-79"><a href="#describe_all_strategies-79"><span class="linenos">79</span></a>
+</span><span id="describe_all_strategies-80"><a href="#describe_all_strategies-80"><span class="linenos">80</span></a><span class="sd">    Descriptions are derived from the docstrings of the strategy functions.</span>
+</span><span id="describe_all_strategies-81"><a href="#describe_all_strategies-81"><span class="linenos">81</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="describe_all_strategies-82"><a href="#describe_all_strategies-82"><span class="linenos">82</span></a>    <span class="n">out</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+</span><span id="describe_all_strategies-83"><a href="#describe_all_strategies-83"><span class="linenos">83</span></a>    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">strategy_func</span> <span class="ow">in</span> <span class="n">strategy_funcs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="describe_all_strategies-84"><a href="#describe_all_strategies-84"><span class="linenos">84</span></a>        <span class="n">desc</span> <span class="o">=</span> <span class="n">strategy_func</span><span class="o">.</span><span class="vm">__doc__</span>
+</span><span id="describe_all_strategies-85"><a href="#describe_all_strategies-85"><span class="linenos">85</span></a>        <span class="k">if</span> <span class="n">desc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="describe_all_strategies-86"><a href="#describe_all_strategies-86"><span class="linenos">86</span></a>            <span class="n">out</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;- </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+</span><span id="describe_all_strategies-87"><a href="#describe_all_strategies-87"><span class="linenos">87</span></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="describe_all_strategies-88"><a href="#describe_all_strategies-88"><span class="linenos">88</span></a>            <span class="n">out</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;- </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">strategy_func</span><span class="o">.</span><span class="vm">__doc__</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+</span><span id="describe_all_strategies-89"><a href="#describe_all_strategies-89"><span class="linenos">89</span></a>    <span class="k">return</span> <span class="n">out</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Describe all available strategies.</p>
+
+<p>Descriptions are derived from the docstrings of the strategy functions.</p>
+</div>
+
 
                 </section>
     </main>

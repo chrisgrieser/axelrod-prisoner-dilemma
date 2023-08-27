@@ -11,7 +11,7 @@ def __opponent_past_actions(
     self_id: int,
     prev_runs: list[tuple[str, str]],
 ) -> list[str]:
-    """Create a list of the opponents last actions."""
+    """Create a list of the opponent's last actions."""
     opponent_id = 1 if self_id == 0 else 0
     past_opponent_actions = (run[opponent_id] for run in prev_runs)
     return list(past_opponent_actions)
@@ -59,6 +59,9 @@ def opportunist(self_id: int, prev_runs: list[tuple[str, str]]) -> str:
     return "defect" if opp_cooperated_recently else "cooperate"
 
 
+# ──────────────────────────────────────────────────────────────────────────────
+
+
 strategy_funcs = {
     "always_cooperate": lambda *_: "cooperate",
     "always_defect": lambda *_: "defect",
@@ -71,7 +74,10 @@ strategy_funcs = {
 
 
 def describe_all_strategies() -> str:
-    """Describe all available strategies."""
+    """Describe all available strategies.
+
+    Descriptions are derived from the docstrings of the strategy functions.
+    """
     out = ""
     for name, strategy_func in strategy_funcs.items():
         desc = strategy_func.__doc__

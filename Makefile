@@ -1,4 +1,4 @@
-.PHONY: setup, docs, test
+.PHONY: setup docs test
 #───────────────────────────────────────────────────────────────────────────────
 
 test: # simple test run
@@ -10,6 +10,7 @@ setup: # set up virtual environment and install dependencies
 	pip3 install -r requirements.txt
 
 docs: # generate documentation
-	rm -rf ./docs && \
-	pdoc *.py --output-directory=./docs
+	rm -rf ./docs ; \
+	pdoc *.py --output-directory=./docs && \
+	open ./docs/index.html
 
