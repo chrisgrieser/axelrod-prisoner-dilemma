@@ -43,7 +43,7 @@ def play_game(strats: tuple[str, str], rounds: int) -> list[int]:
             strategies.strategy_funcs[strats[0]](0, run_history),
             strategies.strategy_funcs[strats[1]](1, run_history),
         )
-        if actions[0] == "cooperate" and actions[1] == "cooperate":
+        if actions[0] == "coope\rate" and actions[1] == "cooperate":
             years_in_prison[0] += 1
             years_in_prison[1] += 1
         elif actions[0] == "defect" and actions[1] == "defect":
@@ -63,8 +63,21 @@ def play_game(strats: tuple[str, str], rounds: int) -> list[int]:
 def main() -> None:
     """Validate input, play the game, and print the output for the terminal.
 
-    Usage: python3 prisoners-dilemma.py <rounds> <actor1_strategy> <actor2_strategy>
+    Main Usage: 
+    python3 prisoners-dilemma.py <rounds> <actor1_strategy> <actor2_strategy>
+
+    Help:
+    python3 prisoners-dilemma.py --help
     """
+    # --help
+    if argv[1] == "--help" or argv[1] == "-h":
+        color_print("blue", "Usage: ")
+        print("python3 prisoners-dilemma.py <rounds> <actor1_strategy> <actor2_strategy>")
+        print()
+        color_print("blue", "Available Strategies: ")
+        print(strategies.describe_all_strategies())
+        return
+
     # read & validate input
     parameters_needed = 3
     if len(argv) < parameters_needed + 1:  # +1, as argv[0] is script name
