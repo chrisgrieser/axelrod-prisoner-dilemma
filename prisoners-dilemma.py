@@ -28,42 +28,44 @@ def color_print(color: str, text: str) -> None:
 # ──────────────────────────────────────────────────────────────────────────────
 
 
-def strategy_is_valid(strategy: str) -> bool:
-    """Check whether the given strategy is available."""
-    return strategy_to_action(0, strategy, []) != ""
-
-
 def strategy_to_action(
-    actor_self_id: int, strategy: str, previous_runs: list[tuple[str, str]],
-) -> str:
-    """Given the actors idendity, their strategy, and the previous rounds.
+    strategy: str,
+    actor_self_id: int,
+    previous_runs: list[tuple[str, str]],
+) -> str | list:
+    """Given a strategy, return the action to take.
 
-    If an invalid strategy is provided, returns empty string.
+    Alternate mode: If `strategy` is an empty string, return the list of strategies instead.
     """
-    opponent_id = 1 if actor_self_id == 0 else 0
-    is_first_run = len(previous_runs) == 0
-    action = ""
 
-    if strategy == "always_cooperate":
-        action = "cooperate"
-    elif strategy == "always_defect":
-        action = "defect"
-    elif strategy == "random":
-        action = random.choice(["cooperate", "defect"])
-    elif strategy == "alternate":
+    def strat_alternate(self_id: int, prev_runs: list[tuple[str, str]]) -> str:
+        is_first_run = len(prev_runs) == 0
         if is_first_run:
-            action = "cooperate"
-        else:
-            last_self_action = previous_runs[-1][actor_self_id]
-            action = "defect" if last_self_action == "cooperate" else "cooperate"
-    elif strategy == "tit-for-tat":
-        if is_first_run:
-            action = "cooperate"
-        else:
-            last_opponent_action = previous_runs[-1][opponent_id]
-            action = last_opponent_action
+            return "cooperate"
+        last_self_action = prev_runs[-1][self_id]
+        return "defect" if last_self_action == "cooperate" else "cooperate"
 
-    return action
+    def strat_tit_for_tat(self_id: int, prev_runs: list[tuple[str, str]]) -> str:
+        is_first_run = len(prev_runs) == 0
+        if is_first_run:
+            return "cooperate"
+        opponent_id = 1 if self_id == 0 else 0
+        last_opponent_action = prev_runs[-1][opponent_id]
+        return last_opponent_action
+
+    strat_funcs = {
+        "always_cooperate": lambda *_: "cooperate",
+        "always_defect": lambda *_: "defect",
+        "random": lambda *_: random.choice(["cooperate", "defect"]),
+        "alternate": strat_alternate,
+        "tit-for-tat": strat_tit_for_tat,
+    }
+    # ──────────────────────────────────────────────────────────────────────────
+    if not strategy:
+        return list(strat_funcs.keys())
+
+    action_func = strat_funcs[strategy]
+    return action_func(actor_self_id, previous_runs)
 
 
 def play_game(strats: tuple[str, str], rounds: int) -> list[int]:
@@ -77,8 +79,8 @@ def play_game(strats: tuple[str, str], rounds: int) -> list[int]:
 
     for _ in range(rounds):
         actions = (
-            strategy_to_action(0, strats[0], run_history),
-            strategy_to_action(1, strats[1], run_history),
+            strategy_to_action(strats[0], 0, run_history),
+            strategy_to_action(strats[1], 1, run_history),
         )
         if actions[0] == "cooperate" and actions[1] == "cooperate":
             years_in_prison[0] += 1
@@ -98,7 +100,7 @@ def play_game(strats: tuple[str, str], rounds: int) -> list[int]:
 
 
 def main() -> None:
-    """Execute main function.
+    """Validate input, play the game, and print the output for the terminal.
 
     Usage: python3 prisoners-dilemma.py <rounds> <actor1_strategy> <actor2_strategy>
     """
@@ -117,9 +119,13 @@ def main() -> None:
         color_print("yellow", "Number of rounds must be a number.")
         return
     strats_used = (sys.argv[2], sys.argv[3])
-    if not strategy_is_valid(strats_used[0]) or not strategy_is_valid(strats_used[1]):
-        color_print("yellow", "Invalid strategy.")
-        return
+    available_strats = strategy_to_action("", -1, [])
+    for strategy in strats_used:
+        if strategy not in available_strats:
+            msg = f"Strategy '{strategy}' is invalid. Available strategies are:"
+            msg += "\n- " + "\n- ".join(available_strats)
+            color_print("yellow", msg)
+            return
 
     # play the game
     outcome_years = play_game(strats_used, rounds)
