@@ -9,8 +9,6 @@ setup: # set up virtual environment and install dependencies
 	source venv/bin/activate && \
 	pip3 install -r requirements.txt
 
-docs: # generate documentation
-	rm -rf ./docs ; \
-	pdoc *.py --output-directory=./docs && \
-	open ./docs/index.html
+docs: # browse docs
+	pdoc *.py
 
