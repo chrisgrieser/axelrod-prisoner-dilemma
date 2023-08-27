@@ -6,8 +6,9 @@ Prior software: https://github.com/Axelrod-Python/Axelrod
 
 from __future__ import annotations
 
-import random
-import sys
+from sys import argv
+
+import strategies
 
 # ──────────────────────────────────────────────────────────────────────────────
 
@@ -15,7 +16,7 @@ import sys
 def color_print(color: str, text: str) -> None:
     """Print colored text with ANSI escape codes for the terminal."""
     colors = {
-        "magenta": "\033[1;35m",  # ] -- needed to fix confusing the indentationexpr
+        "magenta": "\033[1;35m",  # ] -- FIX needed to fix confusing the indentationexpr
         "blue": "\033[1;34m",  # ]
         "green": "\033[1;32m",  # ]
         "yellow": "\033[1;33m",  # ]
@@ -28,72 +29,19 @@ def color_print(color: str, text: str) -> None:
 # ──────────────────────────────────────────────────────────────────────────────
 
 
-def strategy_to_action(
-    strategy: str,
-    actor_self_id: int,
-    previous_runs: list[tuple[str, str]],
-) -> str | list:
-    """Given a strategy, return the action the actor takes.
-
-    Alternate mode: If `strategy` is an empty string, return the list of strategies instead.
-    """
-
-    def strat_alternate(self_id: int, prev_runs: list[tuple[str, str]]) -> str:
-        """Alternate between cooperating and defecting."""
-        is_first_run = len(prev_runs) == 0
-        if is_first_run:
-            return "cooperate"
-        last_self_action = prev_runs[-1][self_id]
-        return "defect" if last_self_action == "cooperate" else "cooperate"
-
-    def strat_tit_for_tat(self_id: int, prev_runs: list[tuple[str, str]]) -> str:
-        """Mirrors last action taken by the opponent."""
-        is_first_run = len(prev_runs) == 0
-        if is_first_run:
-            return "cooperate"
-        opponent_id = 1 if self_id == 0 else 0
-        last_opponent_action = prev_runs[-1][opponent_id]
-        return last_opponent_action
-
-    def strat_unforgiving(self_id: int, prev_runs: list[tuple[str, str]]) -> str:
-        """If the opponent has defected at any time in the past, defect."""
-        is_first_run = len(prev_runs) == 0
-        if is_first_run:
-            return "cooperate"
-        opponent_id = 1 if self_id == 0 else 0
-        prev_opponnent_actions = (run[opponent_id] for run in prev_runs)
-        opponent_has_defected_once = "defect" in prev_opponnent_actions
-        return "defect" if opponent_has_defected_once else "cooperate"
-
-    strat_funcs = {
-        "always_cooperate": lambda *_: "cooperate",
-        "always_defect": lambda *_: "defect",
-        "random": lambda *_: random.choice(["cooperate", "defect"]),
-        "alternate": strat_alternate,
-        "tit-for-tat": strat_tit_for_tat,
-        "unforgiving": strat_unforgiving,
-    }
-    # ──────────────────────────────────────────────────────────────────────────
-    if not strategy:
-        return list(strat_funcs.keys())
-
-    action_func = strat_funcs[strategy]
-    return action_func(actor_self_id, previous_runs)
-
-
 def play_game(strats: tuple[str, str], rounds: int) -> list[int]:
     """Play prisoners' dilemma and return the accumulated outcome for all rounds.
 
     Outcomes are based on the archetypical prisoner's dilemma:
-    https://www.wikiwand.com/en/Prisoner's_dilemma#Strategy_for_the_prisoner's_dilemma
+    <https://www.wikiwand.com/en/Prisoner's_dilemma#Strategy_for_the_prisoner's_dilemma>
     """
     years_in_prison = [0, 0]  # accumulate outcomes
     run_history = []  # keep track of previous rounds, i.e. a memory for the actors
 
     for _ in range(rounds):
         actions = (
-            strategy_to_action(strats[0], 0, run_history),
-            strategy_to_action(strats[1], 1, run_history),
+            strategies.strategy_funcs[strats[0]](0, run_history),
+            strategies.strategy_funcs[strats[1]](1, run_history),
         )
         if actions[0] == "cooperate" and actions[1] == "cooperate":
             years_in_prison[0] += 1
@@ -119,20 +67,20 @@ def main() -> None:
     """
     # read & validate input
     parameters_needed = 3
-    if len(sys.argv) < parameters_needed + 1:  # +1, as argv[0] is script name
+    if len(argv) < parameters_needed + 1:  # +1, as argv[0] is script name
         color_print("yellow", "Expected parameters: <rounds> <actor1_strategy> <actor2_strategy>")
         return
 
     try:
-        rounds = int(sys.argv[1])
+        rounds = int(argv[1])
         if rounds <= 0:
             color_print("yellow", "Number of rounds must be a positive number.")
             return
     except ValueError:
         color_print("yellow", "Number of rounds must be a number.")
         return
-    strats_used = (sys.argv[2], sys.argv[3])
-    available_strats = strategy_to_action("", -1, [])
+    strats_used = (argv[2], argv[3])
+    available_strats = strategies.strategy_funcs.keys()
     for strategy in strats_used:
         if strategy not in available_strats:
             msg = f"Strategy '{strategy}' is invalid. Available strategies are:"
