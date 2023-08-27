@@ -10,5 +10,6 @@ setup: # set up virtual environment and install dependencies
 	pip3 install -r requirements.txt
 
 docs: # browse docs
+	source venv/bin/activate && \
 	pdoc *.py
 
