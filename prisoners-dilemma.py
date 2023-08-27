@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """Simple simulation of the prisoner's dilemma experiment.
 
 Inspired by Axelrod's "Evolution of Cooperation" (1984).
@@ -32,18 +33,25 @@ def color_print(color: str, text: str) -> None:
 def play_game(strats: tuple[str, str], rounds: int) -> list[int]:
     """Play prisoners' dilemma and return the accumulated outcome for all rounds.
 
+    Args:
+        strats: Tuple of two strategies, the position is implicitly the id of the actor
+        rounds: Number of rounds to play
+
+    Returns:
+        Accumulated outcome, i.e. the number of years in prison (higher = worse)
+
     [Outcomes are based on the archetypical prisoner's
      dilemma.](https://www.wikiwand.com/en/Prisoner's_dilemma#Strategy_for_the_prisoner's_dilemma)
     """
     years_in_prison = [0, 0]  # accumulate outcomes
-    run_history = []  # keep track of previous rounds, i.e. a memory for the actors
+    run_history: list[tuple[str, str]] = []  # keep track of previous rounds
 
     for _ in range(rounds):
         actions = (
             strategies.strategy_funcs[strats[0]](0, run_history),
             strategies.strategy_funcs[strats[1]](1, run_history),
         )
-        if actions[0] == "coope\rate" and actions[1] == "cooperate":
+        if actions[0] == "cooperate" and actions[1] == "cooperate":
             years_in_prison[0] += 1
             years_in_prison[1] += 1
         elif actions[0] == "defect" and actions[1] == "defect":
@@ -64,10 +72,10 @@ def main() -> None:
     """Validate input, play the game, and print the output for the terminal.
 
     Main Usage:
-    python3 prisoners-dilemma.py <rounds> <actor1_strategy> <actor2_strategy>
+    `python3 prisoners-dilemma.py <rounds> <actor1_strategy> <actor2_strategy>`
 
     Help:
-    python3 prisoners-dilemma.py --help
+    `python3 prisoners-dilemma.py --help`
     """
     # --help
     if argv[1] == "--help" or argv[1] == "-h":
@@ -83,7 +91,6 @@ def main() -> None:
     if len(argv) < parameters_needed + 1:  # +1, as argv[0] is script name
         color_print("yellow", "Expected parameters: <rounds> <actor1_strategy> <actor2_strategy>")
         return
-
     try:
         rounds = int(argv[1])
         if rounds <= 0:
