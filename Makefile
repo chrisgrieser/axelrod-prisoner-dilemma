@@ -2,7 +2,7 @@
 #───────────────────────────────────────────────────────────────────────────────
 
 test: # simple test run
-	python3 prisoners-dilemma.py 5 "unforgiving" "always_defect"
+	python3 prisoner-dilemma-main.py 5 "unforgiving" "always_defect"
 
 setup: # set up virtual environment and install dependencies
 	python3 -m venv venv && \

@@ -72,15 +72,15 @@ def main() -> None:
     """Validate input, play the game, and print the output for the terminal.
 
     Main Usage:
-    `python3 prisoners-dilemma.py <rounds> <actor1_strategy> <actor2_strategy>`
+    `python3 prisoner_dilemma_main.py <rounds> <actor1_strategy> <actor2_strategy>`
 
     Help:
-    `python3 prisoners-dilemma.py --help`
+    `python3 prisoner_dilemma_main.py --help`
     """
     # --help
     if argv[1] == "--help" or argv[1] == "-h":
         color_print("blue", "Usage: ")
-        print("python3 prisoners-dilemma.py <rounds> <actor1_strategy> <actor2_strategy>")
+        print("python3 prisoner_dilemma_main.py <rounds> <actor1_strategy> <actor2_strategy>")
         print()
         color_print("blue", "Available Strategies: ")
         print(strategies.describe_all_strategies())
