@@ -10,6 +10,8 @@ from __future__ import annotations
 from sys import argv
 
 import strategies
+from parameters import punishment_years as punishment
+from parameters import rounds_to_play as rounds
 
 # ──────────────────────────────────────────────────────────────────────────────
 
@@ -34,47 +36,6 @@ def color_print(color: str, text: str) -> None:
     print(colors[color] + text + colors["reset"])
 
 
-# ──────────────────────────────────────────────────────────────────────────────
-
-
-def play_game(strats: tuple[str, str], rounds: int) -> list[int]:
-    """Play prisoners' dilemma and return the accumulated outcome for all rounds.
-
-    Args:
-        strats: Tuple of two strategies, the position is implicitly the id of the actor
-        rounds: Number of rounds to play
-
-    Returns:
-        Accumulated outcome, i.e. the number of years in prison (higher = worse).
-
-    [Outcomes are based on the archetypical prisoner's
-     dilemma.](https://www.wikiwand.com/en/Prisoner's_dilemma#Strategy_for_the_prisoner's_dilemma)
-    """
-    years_in_prison = [0, 0]  # accumulate outcomes
-    run_history: list[tuple[str, str]] = []  # keep track of previous rounds
-
-    for _ in range(rounds):
-        actions = (
-            strategies.strategy_funcs[strats[0]](0, run_history),
-            strategies.strategy_funcs[strats[1]](1, run_history),
-        )
-        if actions[0] == "cooperate" and actions[1] == "cooperate":
-            years_in_prison[0] += 1
-            years_in_prison[1] += 1
-        elif actions[0] == "defect" and actions[1] == "defect":
-            years_in_prison[0] += 2
-            years_in_prison[1] += 2
-        elif actions[0] == "cooperate" and actions[1] == "defect":
-            years_in_prison[0] += 3
-            years_in_prison[1] += 0
-        elif actions[0] == "defect" and actions[1] == "cooperate":
-            years_in_prison[0] += 0
-            years_in_prison[1] += 3
-        run_history.append(actions)
-
-    return years_in_prison
-
-
 def shell_help() -> None:
     """Print help message."""
     color_print("blue", "Usage: ")
@@ -84,19 +45,108 @@ def shell_help() -> None:
     print(strategies.describe_all_strategies())
 
 
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+def play_game(strats: tuple[str, str]) -> tuple[str, list[int]]:
+    """Play prisoners' dilemma and return the accumulated outcome for all rounds.
+
+    Args:
+        strats: Tuple of two strategies, the position is implicitly the id of the actor
+        rounds: Number of rounds to play
+
+    Returns:
+        victory_strat: The strategy that won the game
+        years_in_prison: Accumulated outcome, i.e. the number of years in prison (higher = worse).
+
+    [Outcomes are based on the archetypical prisoner's
+     dilemma.](https://www.wikiwand.com/en/Prisoner's_dilemma#Strategy_for_the_prisoner's_dilemma)
+    """
+    total_years_in_prison = [0, 0]  # accumulate outcomes
+    run_history: list[tuple[str, str]] = []  # keep track of previous rounds
+
+    for _ in range(rounds):
+        actions = (
+            strategies.strategy_funcs[strats[0]](0, run_history),
+            strategies.strategy_funcs[strats[1]](1, run_history),
+        )
+        if actions[0] == "cooperate" and actions[1] == "cooperate":
+            total_years_in_prison[0] += punishment["both_cooperate"]
+            total_years_in_prison[1] += punishment["both_cooperate"]
+        elif actions[0] == "defect" and actions[1] == "defect":
+            total_years_in_prison[0] += punishment["both_defect"]
+            total_years_in_prison[1] += punishment["both_defect"]
+        elif actions[0] == "cooperate" and actions[1] == "defect":
+            total_years_in_prison[0] += punishment["loose"]
+            total_years_in_prison[1] += punishment["win"]
+        elif actions[0] == "defect" and actions[1] == "cooperate":
+            total_years_in_prison[0] += punishment["win"]
+            total_years_in_prison[1] += punishment["loose"]
+        run_history.append(actions)
+
+    if total_years_in_prison[0] < total_years_in_prison[1]:
+        victory_strat = strats[0]
+    elif total_years_in_prison[0] > total_years_in_prison[1]:
+        victory_strat = strats[1]
+    else:
+        victory_strat = "Tied"
+
+    return victory_strat, total_years_in_prison
+
+
 def battle_royale() -> None:
     """Play the battle royale, i.e. every strategy against every other strategy."""
-    color_print("blue", "Battle Royale: ")
-    all_strats = strategies.list_all
-    # TODO: implement
+    import numpy as np
+    import pandas as pd
+
+    overall_matrix: list[list[str]] = []
+
+    for strategy_row in strategies.list_all:
+        overall_matrix.append([])
+        row_num = len(overall_matrix)
+
+        for strategy_col in strategies.list_all:
+            current_row = overall_matrix[-1]
+            col_num = len(current_row) + 1
+            if col_num >= row_num:
+                # prevent duplicates along the diagonal of the matrix
+                current_row.append("")
+            else:
+                victory_strat, _ = play_game((strategy_row, strategy_col))
+                current_row.append(victory_strat)
+
+    header = list(strategies.list_all)
+    output_frame = pd.DataFrame(
+        np.array(overall_matrix),
+        columns=header,
+        index=header,
+    )
+
+    # write to file
+    import os
+    from pathlib import Path
+
+    html = (
+        "<h3>Prisoner's Dilemma Strategies</h3>"
+        "<i>Battle Royale: every strategy against every other strategy "
+        f" ({rounds} rounds)</i>.<br><br>"
+        + strategies.describe_all_strategies().replace("\n", "<br>") + "<br>" 
+        + output_frame.to_html()
+    )
+    with Path("out.html").open("w") as file:
+        file.write(html)
+    os.system("/usr/bin/open 'out.html'")
+    os.system(
+        'osascript -e \'tell application "System Events" to keystroke "r" using {command down}\'',
+    )
 
 
-def regular_game(rounds: int, strats_used: tuple[str, str]) -> None:
+def one_game_output(strats_used: tuple[str, str], rounds: int) -> None:
     """Play the regular game, i.e. one strategy against another strategy.
 
     Outputs the outcome of the game to the terminal.
     """
-    outcome_years = play_game(strats_used, rounds)
+    victory_strat, outcome_years = play_game(strats_used)
 
     # print the output to the terminal
     color_print("magenta", "Prisoners' Dilemma")
@@ -116,27 +166,23 @@ def regular_game(rounds: int, strats_used: tuple[str, str]) -> None:
     print(f"Actor 2: {outcome_years[1]} years")
     print()
 
-    color_print("blue", "Winner:")
-    if outcome_years[0] < outcome_years[1]:
-        victory_strat = strats_used[0]
-    elif outcome_years[0] > outcome_years[1]:
-        victory_strat = strats_used[1]
-    else:
-        victory_strat = "Tied"
+    color_print("blue", "Victory Strategy:")
     color_print("green", victory_strat)
 
 
 def main() -> None:
-    """Validate input, play the game, and print the output for the terminal.
+    """Play the prisoner's dilemma.
 
-    Main Usage:
-    `python3 prisoner_dilemma_main.py <rounds> <actor1_strategy> <actor2_strategy>`
+    ```bash
+    # Main Usage (Output to terminal):
+    python3 prisoner_dilemma_main.py "actor1_strategy" "actor2_strategy"
 
-    Battle Royale (every strategy against every strategy):
-    `python3 prisoner_dilemma_main.py --all`
+    # Battle Royale — every strategy against every strategy (Output to html):
+    python3 prisoner_dilemma_main.py --all
 
-    Help:
-    `python3 prisoner_dilemma_main.py --help`
+    # Help
+    python3 prisoner_dilemma_main.py --help
+    ```
     """
     # --help
     if argv[1] == "--help" or argv[1] == "-h":
@@ -144,39 +190,26 @@ def main() -> None:
         return
 
     # --all
-    if argv[1] == "--all" or argv[1] == "-a":
+    if argv[1] == "--all" or argv[1] == "--debug":
         battle_royale()
         return
 
-    if argv[1] == "--debug":
-        regular_game(5, ("tit_for_tat", "alternate"))
-        return
-
     # read & validate input
-    parameters_needed = 3
+    parameters_needed = 2
     if len(argv) < parameters_needed + 1:  # +1, as argv[0] is script name
-        color_print("yellow", "Expected parameters: <rounds> <actor1_strategy> <actor2_strategy>")
-        return
-    try:
-        rounds = int(argv[1])
-    except ValueError:
-        rounds = 0
-
-    if rounds <= 0:
-        color_print("yellow", "Number of rounds must be a positive number.")
+        color_print("yellow", "Expected parameters: <actor1_strategy> <actor2_strategy>")
         return
 
-    strats_used = (argv[2], argv[3])
-    available_strats = strategies.strategy_funcs.keys()
+    strats_used = (argv[1], argv[2])
     for strategy in strats_used:
         if strategy not in strategies.list_all:
             msg = f"Strategy '{strategy}' is invalid. Available strategies are:"
-            msg += "\n- " + "\n- ".join(available_strats)
+            msg += "\n- " + "\n- ".join(strategies.list_all)
             color_print("yellow", msg)
             return
 
     # play a regular game
-    regular_game(rounds, strats_used)
+    one_game_output(strats_used, rounds)
 
 
 # ──────────────────────────────────────────────────────────────────────────────

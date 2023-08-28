@@ -59,10 +59,6 @@ def opportunist(self_id: int, prev_runs: list[tuple[str, str]]) -> str:
     return "defect" if opp_cooperated_recently else "cooperate"
 
 
-def test_alternate() -> None:
-    """Test alternate()."""
-
-
 # ──────────────────────────────────────────────────────────────────────────────
 
 
