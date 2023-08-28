@@ -39,8 +39,7 @@ def color_print(color: str, text: str) -> None:
 def shell_help() -> None:
     """Print help message."""
     color_print("blue", "Usage: ")
-    print("python3 prisoner_dilemma_main.py <rounds> <actor1_strategy> <actor2_strategy>")
-    print()
+    print(main.__doc__)
     color_print("blue", "Available Strategies: ")
     print(strategies.describe_all_strategies())
 
