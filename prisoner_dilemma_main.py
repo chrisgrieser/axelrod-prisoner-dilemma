@@ -133,11 +133,17 @@ def battle_royale() -> None:
     )
     with Path("out.html").open("w") as file:
         file.write(html)
-    # open & reload in browser
-    os.system("/usr/bin/open 'out.html'")
-    os.system(
-        'osascript -e \'tell application "System Events" to keystroke "r" using {command down}\'',
-    )
+
+    # on macOS: open & reload in browser
+    import platform
+    if platform.system() == "Darwin":
+        os.system("/usr/bin/open 'out.html'")
+        os.system(
+            'osascript -e \'tell application "System Events" to '
+            'keystroke "r" using {command down}\'',
+        )
+    else:
+        print("Output created as 'out.html'.")
 
 
 def one_game_output(strats_used: tuple[str, str], rounds: int) -> None:
