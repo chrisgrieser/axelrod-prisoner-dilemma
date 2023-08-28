@@ -1,3 +1,2 @@
 pdoc
-numpy
 pandas

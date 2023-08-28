@@ -95,7 +95,6 @@ def play_game(strats: tuple[str, str]) -> tuple[str, list[int]]:
 
 def battle_royale() -> None:
     """Play the battle royale, i.e. every strategy against every other strategy."""
-    import numpy as np
     import pandas as pd
 
     overall_matrix: list[list[str]] = []
@@ -116,7 +115,7 @@ def battle_royale() -> None:
 
     header = list(strategies.list_all)
     output_frame = pd.DataFrame(
-        np.array(overall_matrix),
+        overall_matrix,
         columns=header,
         index=header,
     )
@@ -134,6 +133,7 @@ def battle_royale() -> None:
     )
     with Path("out.html").open("w") as file:
         file.write(html)
+    # open & reload in browser
     os.system("/usr/bin/open 'out.html'")
     os.system(
         'osascript -e \'tell application "System Events" to keystroke "r" using {command down}\'',
