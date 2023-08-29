@@ -47,22 +47,30 @@ def shell_help() -> None:
 # ──────────────────────────────────────────────────────────────────────────────
 
 
-def play_game(strats: tuple[str, str]) -> tuple[str, list[int]]:
+def winner_of_outcome(outcome_years: dict[str, int]) -> str:
+    """Return the winner of the outcome."""
+    strats = list(outcome_years.keys())
+    if outcome_years[strats[0]] < outcome_years[strats[1]]:
+        return strats[0]
+    if outcome_years[strats[0]] > outcome_years[strats[1]]:
+        return strats[1]
+    return "Tied"
+
+
+def play_game(strats: tuple[str, str]) -> dict[str, int]:
     """Play prisoners' dilemma and return the accumulated outcome for all rounds.
 
     Args:
         strats: Tuple of two strategies, the position is implicitly the id of the actor
-        rounds: Number of rounds to play
 
     Returns:
-        victory_strat: The strategy that won the game
-        years_in_prison: Accumulated outcome, i.e. the number of years in prison (higher = worse).
+        dict of strategies and their accumulated years
 
     [Outcomes are based on the archetypical prisoner's
      dilemma.](https://www.wikiwand.com/en/Prisoner's_dilemma#Strategy_for_the_prisoner's_dilemma)
     """
-    total_years_in_prison = [0, 0]  # accumulate outcomes
-    run_history: list[tuple[str, str]] = []  # keep track of previous rounds
+    total_years = [0, 0]
+    run_history: list[tuple[str, str]] = []
 
     for _ in range(rounds):
         actions = (
@@ -70,72 +78,97 @@ def play_game(strats: tuple[str, str]) -> tuple[str, list[int]]:
             strategies.strategy_funcs[strats[1]](1, run_history),
         )
         if actions[0] == "cooperate" and actions[1] == "cooperate":
-            total_years_in_prison[0] += punishment["both_cooperate"]
-            total_years_in_prison[1] += punishment["both_cooperate"]
+            total_years[0] += punishment["both_cooperate"]
+            total_years[1] += punishment["both_cooperate"]
         elif actions[0] == "defect" and actions[1] == "defect":
-            total_years_in_prison[0] += punishment["both_defect"]
-            total_years_in_prison[1] += punishment["both_defect"]
+            total_years[0] += punishment["both_defect"]
+            total_years[1] += punishment["both_defect"]
         elif actions[0] == "cooperate" and actions[1] == "defect":
-            total_years_in_prison[0] += punishment["loose"]
-            total_years_in_prison[1] += punishment["win"]
+            total_years[0] += punishment["loose"]
+            total_years[1] += punishment["win"]
         elif actions[0] == "defect" and actions[1] == "cooperate":
-            total_years_in_prison[0] += punishment["win"]
-            total_years_in_prison[1] += punishment["loose"]
+            total_years[0] += punishment["win"]
+            total_years[1] += punishment["loose"]
         run_history.append(actions)
 
-    if total_years_in_prison[0] < total_years_in_prison[1]:
-        victory_strat = strats[0]
-    elif total_years_in_prison[0] > total_years_in_prison[1]:
-        victory_strat = strats[1]
-    else:
-        victory_strat = "Tied"
-
-    return victory_strat, total_years_in_prison
+    # transform simple array into dict
+    outcome_years = {
+        strats[0]: total_years[0],
+        strats[1]: total_years[1],
+    }
+    return outcome_years
 
 
 def battle_royale() -> None:
-    """Play the battle royale, i.e. every strategy against every other strategy."""
+    """Play the battle royale, i.e. every strategy against every other strategy.
+
+    Creates html file, containing a matrix of strategies vs strategies, and the
+    accumulated punishment over rounds.
+    """
     import pandas as pd
 
     overall_matrix: list[list[str]] = []
+    total_punishment: dict[str, int] = {}
+    for strategy in strategies.list_all:
+        total_punishment[strategy] = 0
 
     for strategy_row in strategies.list_all:
         overall_matrix.append([])
         row_num = len(overall_matrix)
+        cur_row_matrix = overall_matrix[-1]
 
         for strategy_col in strategies.list_all:
-            current_row = overall_matrix[-1]
-            col_num = len(current_row) + 1
+            # prevent duplicate fights and fights of the strategy against itself
+            col_num = len(cur_row_matrix) + 1
             if col_num >= row_num:
-                # prevent duplicates along the diagonal of the matrix
-                current_row.append("")
-            else:
-                victory_strat, _ = play_game((strategy_row, strategy_col))
-                current_row.append(victory_strat)
+                cur_row_matrix.append("")
+                continue
+
+            outcome_years = play_game((strategy_row, strategy_col))
+
+            # update matrix
+            winner_strat = winner_of_outcome(outcome_years)
+            cur_row_matrix.append(winner_strat)
+
+            # update total punishment count
+            total_punishment[strategy_row] += outcome_years[strategy_row]
+            total_punishment[strategy_col] += outcome_years[strategy_col]
 
     header = list(strategies.list_all)
-    output_frame = pd.DataFrame(
+    matrix_frame = pd.DataFrame(
         overall_matrix,
         columns=header,
         index=header,
+    )
+    punishment_frame = pd.DataFrame(
+        list(total_punishment.items()),
+        columns=["Strategy", "Punishment"],
+        index=None,
     )
 
     # write to file
     import os
     from pathlib import Path
 
-    html = (
+    total_rounds = rounds * (len(strategies.list_all) - 1)
+    html: str = (
         "<h3>Prisoner's Dilemma Strategies</h3>"
         "<i>Battle Royale: every strategy against every other strategy "
         f" ({rounds} rounds)</i>.<br><br>"
-        + strategies.describe_all_strategies().replace("\n", "<br>") + "<br>" 
-        + output_frame.to_html()
+        + strategies.describe_all_strategies().replace("\n", "<br>")
+        + "<br>"
+        + matrix_frame.to_html()
+        + "<br>"
+        f"<h4>Accumulated Punishment over {total_rounds} rounds</h4>"
+        + punishment_frame.to_html()
+        + "<br>"
     )
     with Path("out.html").open("w") as file:
         file.write(html)
 
     # on macOS: open & reload in browser
     import platform
+
     if platform.system() == "Darwin":
         os.system("/usr/bin/open 'out.html'")
         os.system(
@@ -151,7 +184,8 @@ def one_game_output(strats_used: tuple[str, str], rounds: int) -> None:
 
     Outputs the outcome of the game to the terminal.
     """
-    victory_strat, outcome_years = play_game(strats_used)
+    outcome_years = play_game(strats_used)
+    victory_strat = winner_of_outcome(outcome_years)
 
     # print the output to the terminal
     color_print("magenta", "Prisoners' Dilemma")
@@ -167,8 +201,8 @@ def one_game_output(strats_used: tuple[str, str], rounds: int) -> None:
     print()
 
     color_print("blue", "Outcome:")
-    print(f"Actor 1: {outcome_years[0]} years")
-    print(f"Actor 2: {outcome_years[1]} years")
+    print(f"Actor 1: {outcome_years[strats_used[0]]} years")
+    print(f"Actor 2: {outcome_years[strats_used[1]]} years")
     print()
 
     color_print("blue", "Victory Strategy:")
