@@ -19,14 +19,14 @@ from parameters import rounds_to_play as rounds
 def color_print(color: str, text: str) -> None:
     """Print colored text with ANSI escape codes for the terminal.
 
-    if `--debug`, then print plain text
+    If `--debug`, then print plain text.
     """
     if argv[1] == "--debug":
         print(text)
         return
 
     colors = {
-        "magenta": "\033[1;35m",  # ] -- FIX needed to fix confusing the indentationexpr
+        "magenta": "\033[1;35m",  # ] -- FIX needed to fix confusing the indentation expr
         "blue": "\033[1;34m",  # ]
         "green": "\033[1;32m",  # ]
         "yellow": "\033[1;33m",  # ]
@@ -61,7 +61,7 @@ def play_game(strats: tuple[str, str]) -> dict[str, int]:
     """Play prisoners' dilemma and return the accumulated outcome for all rounds.
 
     Args:
-        strats: Tuple of two strategies, the position is implicitly the id of the actor
+        strats: Tuple of two strategies, the position is implicitly the id of the actor.
 
     Returns:
         dict of strategies and their accumulated years
@@ -100,7 +100,7 @@ def play_game(strats: tuple[str, str]) -> dict[str, int]:
 
 
 def battle_royale() -> None:
-    """Play the battle royale, i.e. every strategy against every other strategy.
+    """Play the battle royale, i.e., every strategy against every other strategy.
 
     Creates html file, containing a matrix of strategies vs strategies, and the
     accumulated punishment over rounds.
@@ -180,7 +180,7 @@ def battle_royale() -> None:
 
 
 def one_game_output(strats_used: tuple[str, str], rounds: int) -> None:
-    """Play the regular game, i.e. one strategy against another strategy.
+    """Play the regular game, i.e., one strategy against another strategy.
 
     Outputs the outcome of the game to the terminal.
     """
@@ -214,7 +214,7 @@ def main() -> None:
 
     ```bash
     # Main Usage (Output to terminal):
-    python3 prisoner_dilemma_main.py "actor1_strategy" "actor2_strategy"
+    python3 prisoner_dilemma_main.py "actor_1_strategy" "actor_2_strategy"
 
     # Battle Royale — every strategy against every strategy (Output to html):
     python3 prisoner_dilemma_main.py --all
