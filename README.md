@@ -4,17 +4,25 @@ Simple Recreation of the prisoner's dilemma model from Axelrod's "Evolution of C
 Usage via command line:
 
 ```bash
+# install dependencies
+make setup
+```
+
+```bash
 # activate virtual environment
 source ./.venv/bin/activate
 
+# show API docs
+make docs
+
 # Main Usage (Output to terminal):
-./prisoner_dilemma_main.py "actor1_strategy" "actor2_strategy"
+./src/prisoner_dilemma_main.py "actor1_strategy" "actor2_strategy"
 
 # Battle Royale — every strategy against every strategy (Output to html):
-./prisoner_dilemma_main.py --all
+./src/prisoner_dilemma_main.py --all
 
 # Help
-./prisoner_dilemma_main.py --help
+./src/prisoner_dilemma_main.py --help
 ```
 
 ## Output
