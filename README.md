@@ -16,13 +16,13 @@ source ./.venv/bin/activate
 make docs
 
 # Main Usage (Output to terminal):
-./src/prisoner_dilemma_main.py "actor1_strategy" "actor2_strategy"
+./prisoner_dilemma_main.py "actor1_strategy" "actor2_strategy"
 
 # Battle Royale — every strategy against every strategy (Output to html):
-./src/prisoner_dilemma_main.py --all
+./prisoner_dilemma_main.py --all
 
 # Help
-./src/prisoner_dilemma_main.py --help
+./prisoner_dilemma_main.py --help
 ```
 
 ## Output

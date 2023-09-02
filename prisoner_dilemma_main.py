@@ -16,31 +16,11 @@ from parameters import rounds_to_play as rounds
 # ──────────────────────────────────────────────────────────────────────────────
 
 
-def color_print(color: str, text: str) -> None:
-    """Print colored text with ANSI escape codes for the terminal.
-
-    If `--debug`, then print plain text.
-    """
-    if argv[1] == "--debug":
-        print(text)
-        return
-
-    colors = {
-        "magenta": "\033[1;35m",  # ] -- FIX needed to fix confusing the indentation expr
-        "blue": "\033[1;34m",  # ]
-        "green": "\033[1;32m",  # ]
-        "yellow": "\033[1;33m",  # ]
-        "red": "\033[1;31m",  # ]
-        "reset": "\033[0m",  # ]
-    }
-    print(colors[color] + text + colors["reset"])
-
-
 def shell_help() -> None:
     """Print help message."""
-    color_print("blue", "Usage: ")
+    print("Usage: ")
     print(main.__doc__)
-    color_print("blue", "Available Strategies: ")
+    print("Available Strategies: ")
     print(strategies.describe_all_strategies())
 
 
@@ -188,25 +168,25 @@ def one_game_output(strats_used: tuple[str, str], rounds: int) -> None:
     victory_strat = winner_of_outcome(outcome_years)
 
     # print the output to the terminal
-    color_print("magenta", "Prisoners' Dilemma")
-    color_print("magenta", "────────────────────────")
+    print("PRISONERS' DILEMMA")
+    print("────────────────────────")
 
-    color_print("blue", "Strategies:")
+    print("STRATEGIES:")
     print("Actor 1:", strats_used[0])
     print("Actor 2:", strats_used[1])
     print()
 
-    color_print("blue", "Rounds:")
+    print("ROUNDS:")
     print(rounds)
     print()
 
-    color_print("blue", "Outcome:")
+    print("OUTCOME:")
     print(f"Actor 1: {outcome_years[strats_used[0]]} years")
     print(f"Actor 2: {outcome_years[strats_used[1]]} years")
     print()
 
-    color_print("blue", "Victory Strategy:")
-    color_print("green", victory_strat)
+    print("VICTORY STRATEGY:")
+    print(victory_strat)
 
 
 def main() -> None:
@@ -224,19 +204,20 @@ def main() -> None:
     ```
     """
     # --help
-    if argv[1] == "--help" or argv[1] == "-h":
+    no_parameter = len(argv) == 1
+    if no_parameter or argv[1] == "--help" or argv[1] == "-h":
         shell_help()
         return
 
     # --all
-    if argv[1] == "--all" or argv[1] == "--debug":
+    if argv[1] == "--all":
         battle_royale()
         return
 
     # read & validate input
     parameters_needed = 2
     if len(argv) < parameters_needed + 1:  # +1, as argv[0] is script name
-        color_print("yellow", "Expected parameters: <actor1_strategy> <actor2_strategy>")
+        print("Expected parameters: <actor1_strategy> <actor2_strategy>")
         return
 
     strats_used = (argv[1], argv[2])
@@ -244,7 +225,7 @@ def main() -> None:
         if strategy not in strategies.list_all:
             msg = f"Strategy '{strategy}' is invalid. Available strategies are:"
             msg += "\n- " + "\n- ".join(strategies.list_all)
-            color_print("yellow", msg)
+            print(msg)
             return
 
     # play a regular game
