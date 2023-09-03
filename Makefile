@@ -1,22 +1,24 @@
-.PHONY: setup docs run run_all
+.PHONY: init docs run run_all help
 #───────────────────────────────────────────────────────────────────────────────
 
-run_all: # basic testrun
-	export IS_MAKE=1 && \
+run: # "tit_for_tat" vs "unforgiving"
 	source ./.venv/bin/activate && \
-	python3 ./prisoner_dilemma_main.py "tit_for_tat" "unforgiving"
+	python3 prisoner_dilemma/main.py "tit_for_tat" "unforgiving"
 
-run: # basic testrun
-	export IS_MAKE=1 && \
+run_all: # run battle royal
 	source ./.venv/bin/activate && \
-	python3 ./prisoner_dilemma_main.py --all
+	python3 prisoner_dilemma/main.py --all
 
-setup: # set up virtual environment and install dependencies
+help:
+	source ./.venv/bin/activate && \
+	python3 prisoner_dilemma/main.py --help
+
+init: # set up venv & install deps
 	python3 -m venv ./.venv && \
 	source ./.venv/bin/activate && \
 	pip3 install -r requirements.txt
 
-docs: # browse docs
+docs: # generate pdoc
 	source ./.venv/bin/activate && \
-	pdoc ./src/*.py
+	pdoc ./*.py
 

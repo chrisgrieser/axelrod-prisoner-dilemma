@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Simple simulation of the prisoner's dilemma experiment.
 
 Inspired by Axelrod's "Evolution of Cooperation" (1984).
@@ -89,6 +88,7 @@ def battle_royale() -> None:
 
     overall_matrix: list[list[str]] = []
     total_punishment: dict[str, int] = {}
+
     for strategy in strategies.list_all:
         total_punishment[strategy] = 0
 
@@ -143,20 +143,18 @@ def battle_royale() -> None:
         + punishment_frame.to_html()
         + "<br>"
     )
-    with Path("out.html").open("w") as file:
+
+    filename = ".out.html"
+    with Path(filename).open("w") as file:
         file.write(html)
 
     # on macOS: open & reload in browser
     import platform
 
     if platform.system() == "Darwin":
-        os.system("/usr/bin/open 'out.html'")
-        os.system(
-            'osascript -e \'tell application "System Events" to '
-            'keystroke "r" using {command down}\'',
-        )
+        os.system(f"/usr/bin/open '{filename}'")
     else:
-        print("Output created as 'out.html'.")
+        print(f"Output created as '{filename}'.")
 
 
 def one_game_output(strats_used: tuple[str, str], rounds: int) -> None:
@@ -227,6 +225,9 @@ def main() -> None:
             msg += "\n- " + "\n- ".join(strategies.list_all)
             print(msg)
             return
+    if argv[1] == argv[2]:
+        print("Actor 1 and Actor 2 cannot be the same.")
+        return
 
     # play a regular game
     one_game_output(strats_used, rounds)

@@ -5,7 +5,7 @@ Usage via command line:
 
 ```bash
 # install dependencies
-make setup
+make init
 ```
 
 ```bash
@@ -16,13 +16,13 @@ source ./.venv/bin/activate
 make docs
 
 # Main Usage (Output to terminal):
-./prisoner_dilemma_main.py "actor1_strategy" "actor2_strategy"
+python3 prisoner_dilemma/main.py "actor1_strategy" "actor2_strategy"
 
 # Battle Royale — every strategy against every strategy (Output to html):
-./prisoner_dilemma_main.py --all
+python3 prisoner_dilemma/main.py --all
 
 # Help
-./prisoner_dilemma_main.py --help
+python3 prisoner_dilemma/main.py --help
 ```
 
 ## Output
