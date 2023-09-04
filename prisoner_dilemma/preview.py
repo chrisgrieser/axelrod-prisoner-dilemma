@@ -14,12 +14,13 @@ def preview_html(html: str) -> None:
     with outfile.open("w") as file:
         file.write(html)
 
-    # on macOS: open
+    # on macOS: open in quicklook
     if platform.system() == "Darwin":
         import os
 
         # tempfile does not work with `qlmanage` for some reason
         os.system(f"qlmanage -p '{outfile.name}' &>/dev/null")
         outfile.unlink()  # remove file
+    # other OS: just point out the browser
     else:
         print(f"Output created as '{outfile.name}'.")
