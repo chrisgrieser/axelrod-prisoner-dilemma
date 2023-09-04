@@ -11,6 +11,7 @@ from sys import argv
 import strategies
 from parameters import punishment_years as punishment
 from parameters import rounds_to_play as rounds
+from preview import preview_html
 
 # ──────────────────────────────────────────────────────────────────────────────
 
@@ -126,10 +127,6 @@ def battle_royale() -> None:
         index=None,
     )
 
-    # write to file
-    import os
-    from pathlib import Path
-
     total_rounds = rounds * (len(strategies.list_all) - 1)
     html: str = (
         "<h3>Prisoner's Dilemma Strategies</h3>"
@@ -144,17 +141,7 @@ def battle_royale() -> None:
         + "<br>"
     )
 
-    filename = ".out.html"
-    with Path(filename).open("w") as file:
-        file.write(html)
-
-    # on macOS: open & reload in browser
-    import platform
-
-    if platform.system() == "Darwin":
-        os.system(f"/usr/bin/open '{filename}'")
-    else:
-        print(f"Output created as '{filename}'.")
+    preview_html(html)
 
 
 def one_game_output(strats_used: tuple[str, str], rounds: int) -> None:
