@@ -24,9 +24,6 @@ def shell_help() -> None:
     print(strategies.describe_all_strategies())
 
 
-# ──────────────────────────────────────────────────────────────────────────────
-
-
 def winner_of_outcome(outcome_years: dict[str, int]) -> str:
     """Return the winner of the outcome."""
     strats = list(outcome_years.keys())
@@ -144,7 +141,7 @@ def battle_royale() -> None:
     preview_html(html)
 
 
-def one_game_output(strats_used: tuple[str, str], rounds: int) -> None:
+def one_game_output(strats_used: tuple[str, str]) -> None:
     """Play the regular game, i.e., one strategy against another strategy.
 
     Outputs the outcome of the game to the terminal.
@@ -194,11 +191,12 @@ def main() -> None:
         shell_help()
         return
 
-    # --all
+    # --all: BATTLE ROYALE
     if argv[1] == "--all":
         battle_royale()
         return
 
+    # PLAY A REGULAR GAME
     # read & validate input
     parameters_needed = 2
     if len(argv) < parameters_needed + 1:  # +1, as argv[0] is script name
@@ -216,8 +214,7 @@ def main() -> None:
         print("Actor 1 and Actor 2 cannot be the same.")
         return
 
-    # play a regular game
-    one_game_output(strats_used, rounds)
+    one_game_output(strats_used)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
