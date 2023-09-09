@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from sys import argv
 
+import pandas as pd
 import strategies
 from parameters import punishment_years as punishment
 from parameters import rounds_to_play as rounds
@@ -82,8 +83,6 @@ def battle_royale() -> None:
     Creates html file, containing a matrix of strategies vs strategies, and the
     accumulated punishment over rounds.
     """
-    import pandas as pd
-
     overall_matrix: list[list[str]] = []
     total_punishment: dict[str, int] = {}
 
