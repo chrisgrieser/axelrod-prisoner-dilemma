@@ -175,13 +175,13 @@ def main() -> None:
 
     ```bash
     # Main Usage (Output to terminal):
-    python3 prisoner_dilemma_main.py "actor_1_strategy" "actor_2_strategy"
+    python3 prisoner_dilemma/main.py "actor_1_strategy" "actor_2_strategy"
 
     # Battle Royale — every strategy against every strategy (Output to html):
-    python3 prisoner_dilemma_main.py --all
+    python3 prisoner_dilemma/main.py --all
 
     # Help
-    python3 prisoner_dilemma_main.py --help
+    python3 prisoner_dilemma/main.py --help
     ```
     """
     # --help
