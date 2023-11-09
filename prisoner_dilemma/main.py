@@ -45,7 +45,7 @@ def play_game(strats: tuple[str, str]) -> dict[str, int]:
         dict of strategies and their accumulated years
 
     [Outcomes are based on the archetypical prisoner's
-     dilemma.](https://www.wikiwand.com/en/Prisoner's_dilemma#Strategy_for_the_prisoner's_dilemma)
+    dilemma.](https://www.wikiwand.com/en/Prisoner's_dilemma#Strategy_for_the_prisoner's_dilemma)
     """
     total_years = [0, 0]
     run_history: list[tuple[str, str]] = []
