@@ -104,8 +104,8 @@ def battle_royale() -> None:
             outcome_years = play_game((strategy_row, strategy_col))
 
             # update matrix
-            winner_strat = winner_of_outcome(outcome_years)
-            cur_row_matrix.append(winner_strat)
+            winner_strate = winner_of_outcome(outcome_years)
+            cur_row_matrix.append(winner_strate)
 
             # update total punishment count
             total_punishment[strategy_row] += outcome_years[strategy_row]
@@ -146,7 +146,7 @@ def one_game_output(strats_used: tuple[str, str]) -> None:
     Outputs the outcome of the game to the terminal.
     """
     outcome_years = play_game(strats_used)
-    victory_strat = winner_of_outcome(outcome_years)
+    victory_strate = winner_of_outcome(outcome_years)
 
     # print the output to the terminal
     print("PRISONERS' DILEMMA")
@@ -167,7 +167,7 @@ def one_game_output(strats_used: tuple[str, str]) -> None:
     print()
 
     print("VICTORY STRATEGY:")
-    print(victory_strat)
+    print(victory_strate)
 
 
 def main() -> None:
