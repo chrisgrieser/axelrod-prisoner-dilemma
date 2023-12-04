@@ -1,18 +1,26 @@
 # vim: filetype=yaml
-# DOCS https://github.com/citation-file-format/citation-file-format/blob/main/README.md
-#───────────────────────────────────────────────────────────────────────────────
-# If you use this software, please cite it using these metadata.
+# yaml-language-server: $schema=https://raw.githubusercontent.com/citation-file-format/citation-file-format/main/schema.json
+# DOCS https://github.com/citation-file-format/citation-file-format/blob/main/schema-guide.md
 #───────────────────────────────────────────────────────────────────────────────
 
-title: Axelrod Prisoner's Dilemma
-abstract: Recreation of the prisoner's dilemma model from Axelrod's "Evolution of Cooperation" in python
+message: If you use this software, please cite it using these metadata.
+title: Simulation of Axelrod Prisoner's Dilemma
+abstract: >
+  Recreation of the prisoner's dilemma model from Axelrod's "Evolution of Cooperation" in python
+type: software
 authors:
   - family-names: Grieser
     given-names: Christopher
     orcid: "https://orcid.org/0000-0002-0767-9496"
-version: "1.0"
+version: 1.0
 date-released: "2023-09-03"
-identifiers: []
 repository-code: "https://github.com/chrisgrieser/axelrod-prisoner-dilemma/"
-license: MIT
+keywords:
+  - axelrod
+  - game theory
+  - prisoners dilemma
+  - python
+  - simulation
+  - cooperation
 cff-version: 1.2.0
+license: MIT
