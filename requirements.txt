@@ -1,7 +1,2 @@
 pdoc
-bpython
 pandas
-
-ipykernel
-jupyter
-pynvim
