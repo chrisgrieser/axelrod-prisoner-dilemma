@@ -1,2 +1,3 @@
 pdoc
 pandas
+pandas-stubs

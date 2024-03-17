@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import random
+from typing import Callable
 
 # ──────────────────────────────────────────────────────────────────────────────
 
@@ -73,7 +74,7 @@ def opportunist(self_id: int, prev_runs: list[tuple[str, str]]) -> str:
 # ──────────────────────────────────────────────────────────────────────────────
 
 
-strategy_funcs = {
+strategy_funcs: dict[str, Callable[..., str]] = {
     "always_cooperate": lambda *_: "cooperate",
     "always_defect": lambda *_: "defect",
     "random": lambda *_: random.choice(["cooperate", "defect"]),

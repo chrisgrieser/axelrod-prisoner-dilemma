@@ -130,10 +130,10 @@ def battle_royale() -> None:
         f" ({rounds} rounds)</i>.<br><br>"
         + strategies.describe_all_strategies().replace("\n", "<br>")
         + "<br>"
-        + matrix_frame.to_html()
+        + matrix_frame.to_html()  # pyright: ignore [reportUnknownMemberType]
         + "<br>"
         f"<h4>Accumulated Punishment over {total_rounds} rounds</h4>"
-        + punishment_frame.to_html()
+        + punishment_frame.to_html()  # pyright: ignore [reportUnknownMemberType]
         + "<br>"
     )
 
