@@ -4,16 +4,16 @@
 # "tit_for_tat" vs "unforgiving"
 run:
 	source ./.venv/bin/activate && \
-	python3 prisoner_dilemma/main.py "tit_for_tat" "unforgiving"
+	python3 -m prisoner_dilemma.main "tit_for_tat" "unforgiving"
 
 # run battle royal
 run_all:
 	source ./.venv/bin/activate && \
-	python3 prisoner_dilemma/main.py --all
+	python3 -m prisoner_dilemma.main --all
 
 help:
 	source ./.venv/bin/activate && \
-	python3 prisoner_dilemma/main.py --help
+	python3 -m prisoner_dilemma.main --help
 
 # set up venv & install deps
 init:

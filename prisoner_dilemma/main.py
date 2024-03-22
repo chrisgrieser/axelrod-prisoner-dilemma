@@ -9,10 +9,11 @@ from __future__ import annotations
 from sys import argv
 
 import pandas as pd
-import strategies
-from parameters import punishment_years as punishment
-from parameters import rounds_to_play as rounds
-from preview import preview_html
+
+from . import strategies
+from .parameters import punishment_years as punishment
+from .parameters import rounds_to_play as rounds
+from .preview import preview_html
 
 # ──────────────────────────────────────────────────────────────────────────────
 
