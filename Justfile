@@ -10,7 +10,7 @@ help:
 	source ./.venv/bin/activate && python3 -m prisoner_dilemma.main --help
 
 init:
-	[[ -d ./.venv ]] && rm -rf ./.venv
+	[[ ! -d ./.venv ]] || rm -rf ./.venv
 	python3 -m venv ./.venv
 	source ./.venv/bin/activate && python3 -m pip install -r requirements.txt
 
