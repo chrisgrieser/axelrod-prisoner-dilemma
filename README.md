@@ -43,3 +43,5 @@ software]. https://github.com/chrisgrieser/axelrod-prisoner-dilemma
 For other citation styles, use the following metadata:
 - [Citation File Format](./CITATION.cff)
 - [BibTeX](./CITATION.bib)
+
+<iframe src="https://github.com/sponsors/chrisgrieser/button" title="Sponsor chrisgrieser" height="32" width="114" style="border: 0; border-radius: 6px;"></iframe>
